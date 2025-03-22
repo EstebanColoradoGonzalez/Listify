@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.entity.User
+import com.estebancoloradogonzalez.listify.utils.InputValidator
+import com.estebancoloradogonzalez.listify.utils.Messages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
@@ -28,7 +30,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun registerUser(name: String, onUserRegistered: (Long) -> Unit) {
+    fun registerUser(name: String, onError: (String) -> Unit, onUserRegistered: (Long) -> Unit) {
+        if (!InputValidator.isValidName(name)) {
+            onError(Messages.ENTER_VALID_NAME_MESSAGE)
+            return
+        }
+
         viewModelScope.launch {
             val newUser = User(name = name, registrationDate = LocalDateTime.now())
             userDao.insertUser(newUser)
