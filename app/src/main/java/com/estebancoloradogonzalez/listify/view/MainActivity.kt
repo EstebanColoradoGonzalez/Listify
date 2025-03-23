@@ -27,11 +27,9 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController)
 
-        // Configurar la barra de navegación inferior con el NavController
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setupWithNavController(navController)
 
-        // Ocultar la barra de navegación en fragmentos específicos
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.registerFragment, R.id.userBudgetFragment -> {

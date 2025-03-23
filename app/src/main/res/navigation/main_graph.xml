@@ -32,24 +32,17 @@
         tools:layout="@layout/fragment_shopping_lists" >
         <argument
             android:name="userId"
-            app:argType="long" />
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.estebancoloradogonzalez.listify.view.SettingsFragment"
         android:label="@string/fragment_settings"
-        tools:layout="@layout/fragment_settings" >
-        <argument
-            android:name="userId"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/productsFragment"
         android:name="com.estebancoloradogonzalez.listify.view.ProductsFragment"
         android:label="@string/fragment_products"
-        tools:layout="@layout/fragment_products" >
-        <argument
-            android:name="userId"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/fragment_products" />
 </navigation>

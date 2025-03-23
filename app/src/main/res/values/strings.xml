@@ -10,4 +10,5 @@
     <string name="fragment_shopping_lists">Listas de Compras</string>
     <string name="fragment_settings">Ajustes</string>
     <string name="fragment_products">Productos</string>
+    <string name="update_settings">Actualizar</string>
 </resources>

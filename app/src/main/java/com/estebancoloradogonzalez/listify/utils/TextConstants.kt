@@ -1,6 +1,7 @@
 package com.estebancoloradogonzalez.listify.utils
 
 object TextConstants {
+    const val EMPTY: String = ""
     const val DATABASE_NAME: String = "listify_database"
     const val TABLE_BUDGET: String = "budget"
     const val COLUMN_VALUE: String = "value"
