@@ -1,6 +1,7 @@
 package com.estebancoloradogonzalez.listify.view
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -50,6 +51,19 @@ class MainActivity : AppCompatActivity() {
             }
             navController.setGraph(graph, null)
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(navController.currentDestination?.id == R.id.shoppingListsFragment
+                    || navController.currentDestination?.id == R.id.userBudgetFragment) {
+                    return
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
     }
 
     override fun onSupportNavigateUp(): Boolean {
