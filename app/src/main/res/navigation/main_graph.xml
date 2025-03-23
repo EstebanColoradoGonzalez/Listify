@@ -21,7 +21,8 @@
         <action
             android:id="@+id/action_userBudgetFragment_to_shoppingListsFragment"
             app:destination="@id/shoppingListsFragment" />
-        <argument android:name="userId"
+        <argument
+            android:name="userId"
             app:argType="long" />
     </fragment>
     <fragment
@@ -29,6 +30,15 @@
         android:name="com.estebancoloradogonzalez.listify.view.ShoppingListsFragment"
         android:label="@string/fragment_shopping_lists"
         tools:layout="@layout/fragment_shopping_lists" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.SettingsFragment"
+        android:label="@string/fragment_settings"
+        tools:layout="@layout/fragment_settings" >
         <argument
             android:name="userId"
             app:argType="long" />
