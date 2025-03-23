@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.estebancoloradogonzalez.listify.R
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
@@ -25,10 +27,21 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController)
 
+        // Configurar la barra de navegación inferior con el NavController
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigationView.setupWithNavController(navController)
+
+        // Ocultar la barra de navegación en fragmentos específicos
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.registerFragment, R.id.userBudgetFragment -> supportActionBar?.hide()
-                else -> supportActionBar?.show()
+                R.id.registerFragment, R.id.userBudgetFragment -> {
+                    supportActionBar?.hide()
+                    bottomNavigationView.visibility = android.view.View.GONE
+                }
+                else -> {
+                    supportActionBar?.show()
+                    bottomNavigationView.visibility = android.view.View.VISIBLE
+                }
             }
 
             if (destination.id == R.id.shoppingListsFragment) {
@@ -54,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(navController.currentDestination?.id == R.id.shoppingListsFragment
+                if (navController.currentDestination?.id == R.id.shoppingListsFragment
                     || navController.currentDestination?.id == R.id.userBudgetFragment) {
                     return
                 } else {
