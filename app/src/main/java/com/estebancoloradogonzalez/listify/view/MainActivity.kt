@@ -24,6 +24,19 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.registerFragment, R.id.userBudgetFragment -> supportActionBar?.hide()
+                else -> supportActionBar?.show()
+            }
+
+            if (destination.id == R.id.shoppingListsFragment) {
+                supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            } else {
+                supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            }
+        }
+
         userViewModel.user.observe(this) { user ->
             val graph = navController.navInflater.inflate(R.navigation.main_graph)
             if (user == null) {
