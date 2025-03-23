@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/registerFragment">
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.RegisterFragment"
+        android:label="@string/fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_userBudgetFragment"
+            app:destination="@id/userBudgetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userBudgetFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.UserBudgetFragment"
+        android:label="@string/fragment_user_budget"
+        tools:layout="@layout/fragment_user_budget" >
+        <action
+            android:id="@+id/action_userBudgetFragment_to_shoppingListsFragment"
+            app:destination="@id/shoppingListsFragment" />
+        <argument android:name="userId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/shoppingListsFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.ShoppingListsFragment"
+        android:label="@string/fragment_shopping_lists"
+        tools:layout="@layout/fragment_shopping_lists" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+</navigation>

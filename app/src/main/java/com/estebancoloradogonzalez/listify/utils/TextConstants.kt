@@ -5,5 +5,5 @@ object TextConstants {
     const val TABLE_BUDGET: String = "budget"
     const val COLUMN_VALUE: String = "value"
     const val USER: String = "user"
-    const val PARAM_USER_ID: String = "USER_ID"
+    const val PARAM_USER_ID: String = "userId"
 }
