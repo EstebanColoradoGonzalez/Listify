@@ -9,6 +9,8 @@
         <item name="colorSecondaryVariant">@color/dark_green</item>
         <item name="colorOnSecondary">@color/white</item>
 
+        <item name="colorAccent">@color/light_green</item>
+
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
         <item name="android:textColorPrimary">@color/white</item>
