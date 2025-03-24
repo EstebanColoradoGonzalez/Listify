@@ -17,4 +17,7 @@ interface UserDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User)
+
+    @Query(Queries.UPDATE_USER)
+    suspend fun updateUserName(userId: Long, newName: String)
 }

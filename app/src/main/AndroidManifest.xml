@@ -12,9 +12,6 @@
         android:theme="@style/Theme.Listify"
         tools:targetApi="31">
         <activity
-            android:name=".view.UserBudgetActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -23,11 +20,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.ShoppingListsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.RegisterActivity"
-            android:exported="false" />
     </application>
 </manifest>
