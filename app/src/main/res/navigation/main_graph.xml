@@ -44,5 +44,66 @@
         android:id="@+id/productsFragment"
         android:name="com.estebancoloradogonzalez.listify.view.ProductsFragment"
         android:label="@string/fragment_products"
-        tools:layout="@layout/fragment_products" />
+        tools:layout="@layout/fragment_products" >
+        <action
+            android:id="@+id/action_productsFragment_to_createProductFragment"
+            app:destination="@id/createProductFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_updateProductFragment"
+            app:destination="@id/updateProductFragment" />
+        <action
+            android:id="@+id/action_productsFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.CategoriesFragment"
+        android:label="@string/fragment_categories"
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_updateCategoryFragment"
+            app:destination="@id/updateCategoryFragment" />
+        <action
+            android:id="@+id/action_categoriesFragment_to_createCategoryFragment"
+            app:destination="@id/createCategoryFragment" />
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/createCategoryFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.CreateCategoryFragment"
+        android:label="@string/fragment_create_category"
+        tools:layout="@layout/fragment_create_category" >
+        <argument
+            android:name="productId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/createProductFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.CreateProductFragment"
+        android:label="@string/fragment_create_product"
+        tools:layout="@layout/fragment_create_product" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateCategoryFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.UpdateCategoryFragment"
+        android:label="@string/fragment_update_category"
+        tools:layout="@layout/fragment_update_category" >
+        <argument
+            android:name="categoryId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateProductFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.UpdateProductFragment"
+        android:label="@string/fragment_update_product"
+        tools:layout="@layout/fragment_update_product" >
+        <argument
+            android:name="productId"
+            app:argType="long" />
+    </fragment>
 </navigation>

@@ -11,4 +11,9 @@
     <string name="fragment_settings">Ajustes</string>
     <string name="fragment_products">Productos</string>
     <string name="update_settings">Actualizar</string>
+    <string name="fragment_categories">Categorías</string>
+    <string name="fragment_create_category">Crear categoría</string>
+    <string name="fragment_create_product">Crear producto</string>
+    <string name="fragment_update_category">Actualizar categoría</string>
+    <string name="fragment_update_product">Actualizar producto</string>
 </resources>
