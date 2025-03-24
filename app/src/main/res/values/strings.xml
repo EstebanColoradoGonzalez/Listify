@@ -5,4 +5,10 @@
     <string name="name_register_input">Nombre completo</string>
     <string name="budget_register_input">Presupuesto mensual de compras</string>
     <string name="begin_input">Iniciar</string>
+    <string name="fragment_register">Registrar Usuario</string>
+    <string name="fragment_user_budget">Registrar Presupuesto</string>
+    <string name="fragment_shopping_lists">Listas de Compras</string>
+    <string name="fragment_settings">Ajustes</string>
+    <string name="fragment_products">Productos</string>
+    <string name="update_settings">Actualizar</string>
 </resources>

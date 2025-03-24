@@ -7,7 +7,9 @@ import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.entity.Budget
 import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
     private val budgetDao = AppDatabase.getDatabase(application).budgetDao()
@@ -23,4 +25,19 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
             budgetDao.insertBudget(newBudget)
         }
     }
+
+    fun updateBudget(userId: Long, newBudget: String, onError: (String) -> Unit) {
+        if (!InputValidator.isValidBudget(newBudget)) {
+            onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
+            return
+        }
+        viewModelScope.launch { budgetDao.updateBudget(userId, newBudget.toDouble()) }
+    }
+
+    suspend fun getUserBudget(): Budget? {
+        return withContext(Dispatchers.IO) {
+            budgetDao.getBudgetByUserId()
+        }
+    }
+
 }
