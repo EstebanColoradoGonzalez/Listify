@@ -42,7 +42,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            if (destination.id == R.id.shoppingListsFragment) {
+            if (destination.id == R.id.shoppingListsFragment ||
+                destination.id == R.id.productsFragment ||
+                destination.id == R.id.settingsFragment) {
                 supportActionBar?.setDisplayHomeAsUpEnabled(false)
             } else {
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -65,8 +67,10 @@ class MainActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (navController.currentDestination?.id == R.id.shoppingListsFragment
-                    || navController.currentDestination?.id == R.id.userBudgetFragment) {
+                if (navController.currentDestination?.id == R.id.shoppingListsFragment ||
+                    navController.currentDestination?.id == R.id.userBudgetFragment ||
+                    navController.currentDestination?.id == R.id.productsFragment ||
+                    navController.currentDestination?.id == R.id.settingsFragment) {
                     return
                 } else {
                     isEnabled = false

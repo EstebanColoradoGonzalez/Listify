@@ -53,11 +53,16 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
     fun updateUserName(userId: Long, newName: String, onError: (String) -> Unit) {
         if (!InputValidator.isValidName(newName)) {
             onError(Messages.ENTER_VALID_NAME_MESSAGE)
             return
         }
-        viewModelScope.launch { userDao.updateUserName(userId, newName) }
+        viewModelScope.launch {
+            userDao.updateUserName(userId, newName)
+            checkUser()
+        }
     }
+
 }
