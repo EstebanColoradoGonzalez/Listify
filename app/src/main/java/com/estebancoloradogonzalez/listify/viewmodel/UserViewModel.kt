@@ -37,7 +37,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         viewModelScope.launch {
-            val newUser = User(name = name, registrationDate = LocalDateTime.now())
+            val newUser = User(name = name, registrationDate = LocalDateTime.now(), budget = 1L) // TODO: Map budget
             userDao.insertUser(newUser)
 
             val userId = userDao.getUserId()
