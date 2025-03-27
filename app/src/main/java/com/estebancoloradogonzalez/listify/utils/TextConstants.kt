@@ -31,6 +31,32 @@ object TextConstants {
     const val COLUMN_DATE: String = "date"
     const val COLUMN_PURCHASED_AMOUNT: String = "purchased_amount"
 
+    const val STATUS_ACTIVE = "Activa"
+    const val STATUS_COMPLETED = "Completada"
+    const val STATUS_CANCELLED = "Cancelada"
+
+    const val UNIT_KILOGRAM = "Kilogramo"
+    const val UNIT_KILOGRAM_SHORT = "kg"
+    const val UNIT_POUND = "Libra"
+    const val UNIT_POUND_SHORT = "lb"
+    const val UNIT_LITER = "Litro"
+    const val UNIT_LITER_SHORT = "L"
+    const val UNIT_COUNT = "Unidad"
+    const val UNIT_COUNT_SHORT = "u"
+
+    const val STORE_D1 = "D1"
+    const val STORE_DOLLAR_CITY = "Dollar City"
+    const val STORE_BUTCHER = "Carnicería"
+    const val STORE_GREENGROCER = "Verdulería"
+    const val STORE_OTHER = "Otros"
+
+    const val FREQUENCY_WEEKLY = "Semanal"
+    const val FREQUENCY_FORTNIGHTLY = "Quincenal"
+    const val FREQUENCY_MONTHLY = "Mensual"
+    const val FREQUENCY_BIMONTHLY = "Bimensual"
+    const val FREQUENCY_QUARTERLY = "Trimestral"
+    const val FREQUENCY_FOUR_MONTHLY = "Cuatrimestral"
+    const val FREQUENCY_SEMIANNUAL = "Semestral"
 
     const val PARAM_USER_ID: String = "userId"
 }
