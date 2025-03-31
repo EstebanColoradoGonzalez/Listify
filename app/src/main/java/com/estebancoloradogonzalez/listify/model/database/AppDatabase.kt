@@ -28,6 +28,7 @@ import com.estebancoloradogonzalez.listify.model.entity.User
 import com.estebancoloradogonzalez.listify.utils.DateConverter
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
@@ -61,30 +62,29 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context, scope: CoroutineScope): AppDatabase {
+        fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     TextConstants.DATABASE_NAME
-                ).addCallback(DatabaseCallback(scope)).build()
+                ).addCallback(DatabaseCallback(context)).build()
                 INSTANCE = instance
                 instance
             }
         }
     }
 
-    private class DatabaseCallback(private val scope: CoroutineScope) : Callback() {
+    private class DatabaseCallback(private val context: Context) : Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch {
-                    populateDatabase(database)
-                }
+            CoroutineScope(Dispatchers.IO).launch {
+                val database = getDatabase(context)
+                prepopulateDatabase(database)
             }
         }
 
-        suspend fun populateDatabase(db: AppDatabase) {
+        suspend fun prepopulateDatabase(db: AppDatabase) {
             val stateDao = db.stateDao()
             val unitDao = db.unitOfMeasurementDao()
             val establishmentDao = db.establishmentDao()

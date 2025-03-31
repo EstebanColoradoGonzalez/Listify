@@ -9,14 +9,13 @@ import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.entity.User
 import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class UserViewModel(application: Application, scope: CoroutineScope) : AndroidViewModel(application) {
-    private val userDao = AppDatabase.getDatabase(application, scope).userDao()
+class UserViewModel(application: Application) : AndroidViewModel(application) {
+    private val userDao = AppDatabase.getDatabase(application).userDao()
 
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user

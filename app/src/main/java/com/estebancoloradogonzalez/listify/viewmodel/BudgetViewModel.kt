@@ -12,8 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BudgetViewModel(application: Application, scope: CoroutineScope) : AndroidViewModel(application) {
-    private val budgetDao = AppDatabase.getDatabase(application, scope).budgetDao()
+class BudgetViewModel(application: Application) : AndroidViewModel(application) {
+    private val budgetDao = AppDatabase.getDatabase(application).budgetDao()
 
     fun insertBudget(value: String, id: Long, onError: (String) -> Unit) {
         if (!InputValidator.isValidBudget(value)) {
