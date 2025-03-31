@@ -22,8 +22,8 @@
             android:id="@+id/action_userBudgetFragment_to_shoppingListsFragment"
             app:destination="@id/shoppingListsFragment" />
         <argument
-            android:name="userId"
-            app:argType="long" />
+            android:name="userName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/shoppingListsFragment"

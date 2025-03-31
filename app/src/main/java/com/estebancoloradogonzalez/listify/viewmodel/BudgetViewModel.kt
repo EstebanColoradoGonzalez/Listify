@@ -15,30 +15,18 @@ import kotlinx.coroutines.withContext
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
     private val budgetDao = AppDatabase.getDatabase(application).budgetDao()
 
-    fun insertBudget(value: String, id: Long, onError: (String) -> Unit) {
-        if (!InputValidator.isValidBudget(value)) {
-            onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
-            return
-        }
-
-        viewModelScope.launch {
-            val newBudget = Budget(value = value.toDouble(), id = id)
-            budgetDao.insertBudget(newBudget)
-        }
-    }
-
-    fun updateBudget(userId: Long, newBudget: String, onError: (String) -> Unit) {
+    fun updateBudget(id: Long, newBudget: String, onError: (String) -> Unit) {
         if (!InputValidator.isValidBudget(newBudget)) {
             onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
             return
         }
-        viewModelScope.launch { budgetDao.updateBudget(userId, newBudget.toDouble()) }
+
+        viewModelScope.launch { budgetDao.updateBudget(id, newBudget.toDouble()) }
     }
 
     suspend fun getUserBudget(): Budget? {
         return withContext(Dispatchers.IO) {
-            budgetDao.getBudgetByUserId()
+            budgetDao.getBudget()
         }
     }
-
 }

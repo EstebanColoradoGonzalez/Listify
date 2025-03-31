@@ -14,6 +14,9 @@ interface BudgetDAO {
     @Query(Queries.UPDATE_BUDGET)
     suspend fun updateBudget(id: Long, newBudget: Double)
 
+    @Query(Queries.SELECT_BUDGET_ID)
+    suspend fun getBudgetId(): Long
+
     @Query(Queries.SELECT_BUDGET)
-    suspend fun getBudgetByUserId(): Budget?
+    suspend fun getBudget(): Budget?
 }

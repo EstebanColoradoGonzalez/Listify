@@ -26,6 +26,7 @@ import com.estebancoloradogonzalez.listify.model.entity.State
 import com.estebancoloradogonzalez.listify.model.entity.UnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.User
 import com.estebancoloradogonzalez.listify.utils.DateConverter
+import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ import kotlinx.coroutines.launch
         ProductPurchaseFrequency::class,
         ProductCategory::class
     ],
-    version = 1
+    version = NumericConstants.POSITIVE_ONE
 )
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
