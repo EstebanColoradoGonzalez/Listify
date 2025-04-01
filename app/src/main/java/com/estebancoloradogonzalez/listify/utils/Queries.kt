@@ -11,4 +11,5 @@ object Queries {
     const val SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE id = :id"
     const val SELECT_CATEGORY_BY_NAME = "SELECT * FROM category WHERE name = :name"
     const val UPDATE_CATEGORY = "UPDATE category SET name = :newName WHERE id = :id"
+    const val DELETE_CATEGORY = "DELETE FROM category WHERE id = :id"
 }

@@ -8,10 +8,18 @@ import com.estebancoloradogonzalez.listify.model.entity.Category
 import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class CategoryViewModel(application: Application) : AndroidViewModel(application) {
 
     private val categoryDAO = AppDatabase.getDatabase(application).categoryDao()
+
+    suspend fun getCategories(): List<Category> {
+        return withContext(Dispatchers.IO) {
+            categoryDAO.getCategories()
+        }
+    }
 
     fun createCategory(name: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
         if (!InputValidator.isValidName(name)) {

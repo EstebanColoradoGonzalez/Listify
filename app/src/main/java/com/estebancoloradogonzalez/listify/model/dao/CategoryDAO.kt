@@ -23,4 +23,7 @@ interface CategoryDAO {
 
     @Query(Queries.UPDATE_CATEGORY)
     suspend fun updateCategory(id: Long, newName: String)
+
+    @Query(Queries.DELETE_CATEGORY)
+    suspend fun deleteCategoryById(id: Long)
 }
