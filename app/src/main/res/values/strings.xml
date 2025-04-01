@@ -18,4 +18,6 @@
     <string name="fragment_update_product">Actualizar producto</string>
     <string name="category_name_input">Nombre de la categoría</string>
     <string name="save">Guardar</string>
+    <string name="update">Actualizar</string>
+    <string name="delete">Eliminar</string>
 </resources>
