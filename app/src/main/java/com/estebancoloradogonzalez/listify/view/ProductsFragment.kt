@@ -40,7 +40,7 @@ class ProductsFragment : Fragment() {
         }
 
         binding.btnCategories.setOnClickListener {
-            val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment(userId)
+            val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment()
             findNavController().navigate(action)
         }
     }

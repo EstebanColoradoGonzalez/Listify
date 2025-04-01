@@ -4,4 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.CategoriesFragment">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/fragment_create_category"
+        android:src="@drawable/add_button"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"/>
 </FrameLayout>

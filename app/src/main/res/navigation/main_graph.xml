@@ -66,19 +66,12 @@
         <action
             android:id="@+id/action_categoriesFragment_to_createCategoryFragment"
             app:destination="@id/createCategoryFragment" />
-        <argument
-            android:name="userId"
-            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/createCategoryFragment"
         android:name="com.estebancoloradogonzalez.listify.view.CreateCategoryFragment"
         android:label="@string/fragment_create_category"
-        tools:layout="@layout/fragment_create_category" >
-        <argument
-            android:name="productId"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/fragment_create_category" />
     <fragment
         android:id="@+id/createProductFragment"
         android:name="com.estebancoloradogonzalez.listify.view.CreateProductFragment"

@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.estebancoloradogonzalez.listify.model.dao.BudgetDAO
+import com.estebancoloradogonzalez.listify.model.dao.CategoryDAO
 import com.estebancoloradogonzalez.listify.model.dao.EstablishmentDAO
 import com.estebancoloradogonzalez.listify.model.dao.PurchaseFrequencyDAO
 import com.estebancoloradogonzalez.listify.model.dao.StateDAO
@@ -58,6 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun unitOfMeasurementDao(): UnitOfMeasurementDAO
     abstract fun establishmentDao(): EstablishmentDAO
     abstract fun purchaseFrequencyDao(): PurchaseFrequencyDAO
+    abstract fun categoryDao(): CategoryDAO
 
     companion object {
         @Volatile
