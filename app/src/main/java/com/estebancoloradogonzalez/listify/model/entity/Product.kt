@@ -26,7 +26,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 )
 data class Product(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_NAME)
     val name: String,
     @ColumnInfo(name = TextConstants.COLUMN_UNIT_PRICE)

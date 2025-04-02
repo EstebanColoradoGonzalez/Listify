@@ -9,7 +9,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 @Entity(tableName = TextConstants.TABLE_STATE)
 data class State(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_NAME)
     val name: String,
 )

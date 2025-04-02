@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 )
 data class ShoppingList(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_DATE)
     val date: LocalDateTime,
     @ColumnInfo(name = TextConstants.TABLE_USER)

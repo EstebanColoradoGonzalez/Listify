@@ -9,7 +9,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 @Entity(tableName = TextConstants.TABLE_UNIT_OF_MEASUREMENT)
 data class UnitOfMeasurement(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_NAME)
     val name: String,
     @ColumnInfo(name = TextConstants.COLUMN_SYMBOL)

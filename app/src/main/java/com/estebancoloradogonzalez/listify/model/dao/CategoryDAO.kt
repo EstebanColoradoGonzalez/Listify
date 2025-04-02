@@ -12,6 +12,9 @@ interface CategoryDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(category: Category)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg categories: Category)
+
     @Query(Queries.SELECT_CATEGORIES)
     suspend fun getCategories(): List<Category>
 

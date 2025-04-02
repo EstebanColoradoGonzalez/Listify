@@ -20,4 +20,8 @@
     <string name="save">Guardar</string>
     <string name="update">Actualizar</string>
     <string name="delete">Eliminar</string>
+    <string name="product_name">Nombre</string>
+    <string name="product_price">Precio</string>
+    <string name="product_quantity">Cantidad</string>
+    <string name="create">Crear</string>
 </resources>

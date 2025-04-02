@@ -30,7 +30,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 )
 data class AmountUnitOfMeasurement(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.TABLE_AMOUNT)
     val amount: Long,
     @ColumnInfo(name = TextConstants.TABLE_UNIT_OF_MEASUREMENT)

@@ -9,7 +9,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 @Entity(tableName = TextConstants.TABLE_AMOUNT)
 data class Amount(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_VALUE)
     val value: Double,
 )

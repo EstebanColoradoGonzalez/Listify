@@ -59,4 +59,21 @@ object TextConstants {
     const val FREQUENCY_SEMIANNUAL = "Semestral"
 
     const val PARAM_USER_ID: String = "userId"
+
+    const val FRUITS = "Frutas"
+    const val VEGETABLES = "Verduras"
+    const val SPICES_AND_CONDIMENTS = "Especias y Condimentos"
+    const val BEVERAGES = "Bebidas"
+    const val GRAINS_AND_CEREALS = "Granos y Cereales"
+    const val MEATS_AND_PROTEINS = "Carnes y Proteínas"
+    const val DAIRY_AND_DERIVATIVES = "Lácteos y Derivados"
+    const val BAKERY = "Panadería"
+    const val SAUCES_AND_DRESSINGS = "Salsas y Aderezos"
+    const val SWEETENERS = "Endulzantes"
+    const val OILS_AND_FATS = "Aceites y Grasas"
+    const val SNACKS = "Mecato"
+    const val CLEANING_AND_HOME = "Limpieza y Hogar"
+    const val PETS = "Mascotas"
+    const val OTHERS = "Otros"
+
 }

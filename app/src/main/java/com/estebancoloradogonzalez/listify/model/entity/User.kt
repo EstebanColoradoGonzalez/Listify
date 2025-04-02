@@ -20,7 +20,7 @@ import java.time.LocalDateTime
     )
 data class User(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_NAME)
     val name: String,
     @ColumnInfo(name = TextConstants.COLUMN_REGISTRATION_DATE)

@@ -32,7 +32,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 )
 data class ProductShoppingList(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_UNIT_PRICE)
     val unitPrice: Double,
     @ColumnInfo(name = TextConstants.COLUMN_IS_ACTIVE)

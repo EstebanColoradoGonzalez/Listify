@@ -30,7 +30,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
 )
 data class ProductEstablishment(
     @PrimaryKey(autoGenerate = true)
-    val id: Long = NumericConstants.ZERO,
+    val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.TABLE_PRODUCT)
     val product: Long,
     @ColumnInfo(name = TextConstants.TABLE_ESTABLISHMENT)

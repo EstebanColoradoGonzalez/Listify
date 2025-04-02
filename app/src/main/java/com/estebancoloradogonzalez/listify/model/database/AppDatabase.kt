@@ -92,6 +92,7 @@ abstract class AppDatabase : RoomDatabase() {
             val unitDao = db.unitOfMeasurementDao()
             val establishmentDao = db.establishmentDao()
             val frequencyDao = db.purchaseFrequencyDao()
+            val categoryDao = db.categoryDao()
 
             stateDao.deleteAll()
             unitDao.deleteAll()
@@ -127,6 +128,24 @@ abstract class AppDatabase : RoomDatabase() {
                 PurchaseFrequency(name = TextConstants.FREQUENCY_QUARTERLY),
                 PurchaseFrequency(name = TextConstants.FREQUENCY_FOUR_MONTHLY),
                 PurchaseFrequency(name = TextConstants.FREQUENCY_SEMIANNUAL)
+            )
+
+            categoryDao.insertAll(
+                Category(name = TextConstants.FRUITS),
+                Category(name = TextConstants.VEGETABLES),
+                Category(name = TextConstants.SPICES_AND_CONDIMENTS),
+                Category(name = TextConstants.BEVERAGES),
+                Category(name = TextConstants.GRAINS_AND_CEREALS),
+                Category(name = TextConstants.MEATS_AND_PROTEINS),
+                Category(name = TextConstants.DAIRY_AND_DERIVATIVES),
+                Category(name = TextConstants.BAKERY),
+                Category(name = TextConstants.SAUCES_AND_DRESSINGS),
+                Category(name = TextConstants.SWEETENERS),
+                Category(name = TextConstants.OILS_AND_FATS),
+                Category(name = TextConstants.SNACKS),
+                Category(name = TextConstants.CLEANING_AND_HOME),
+                Category(name = TextConstants.PETS),
+                Category(name = TextConstants.OTHERS),
             )
         }
     }
