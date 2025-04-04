@@ -5,7 +5,7 @@ object InputValidator {
         return name.isNotBlank() && name.matches(Regex(RegexExpressions.VALID_NAME_REGEX))
     }
 
-    fun isValidBudget(value: String): Boolean {
+    fun isValidNumericValue(value: String): Boolean {
         return value.isNotBlank()
                 && value.matches(Regex(RegexExpressions.VALID_MONEY_NUMBER_REGEX))
                 && value.toDouble() > NumericConstants.LONG_ZERO

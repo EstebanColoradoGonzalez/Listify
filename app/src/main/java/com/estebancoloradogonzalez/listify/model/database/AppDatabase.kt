@@ -6,9 +6,15 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.estebancoloradogonzalez.listify.model.dao.AmountDAO
+import com.estebancoloradogonzalez.listify.model.dao.AmountUnitOfMeasurementDAO
 import com.estebancoloradogonzalez.listify.model.dao.BudgetDAO
 import com.estebancoloradogonzalez.listify.model.dao.CategoryDAO
 import com.estebancoloradogonzalez.listify.model.dao.EstablishmentDAO
+import com.estebancoloradogonzalez.listify.model.dao.ProductCategoryDAO
+import com.estebancoloradogonzalez.listify.model.dao.ProductDAO
+import com.estebancoloradogonzalez.listify.model.dao.ProductEstablishmentDAO
+import com.estebancoloradogonzalez.listify.model.dao.ProductPurchaseFrenquencyDAO
 import com.estebancoloradogonzalez.listify.model.dao.PurchaseFrequencyDAO
 import com.estebancoloradogonzalez.listify.model.dao.StateDAO
 import com.estebancoloradogonzalez.listify.model.dao.UnitOfMeasurementDAO
@@ -53,13 +59,19 @@ import kotlinx.coroutines.launch
 )
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDAO
+    abstract fun amountDao(): AmountDAO
+    abstract fun amountUnitOfMeasurementDao(): AmountUnitOfMeasurementDAO
     abstract fun budgetDao(): BudgetDAO
+    abstract fun categoryDao(): CategoryDAO
+    abstract fun establishmentDao(): EstablishmentDAO
+    abstract fun productCategoryDao(): ProductCategoryDAO
+    abstract fun productDao(): ProductDAO
+    abstract fun productEstablishmentDao(): ProductEstablishmentDAO
+    abstract fun productPurchaseFrenquencyDao(): ProductPurchaseFrenquencyDAO
+    abstract fun purchaseFrequencyDao(): PurchaseFrequencyDAO
     abstract fun stateDao(): StateDAO
     abstract fun unitOfMeasurementDao(): UnitOfMeasurementDAO
-    abstract fun establishmentDao(): EstablishmentDAO
-    abstract fun purchaseFrequencyDao(): PurchaseFrequencyDAO
-    abstract fun categoryDao(): CategoryDAO
+    abstract fun userDao(): UserDAO
 
     companion object {
         @Volatile

@@ -33,7 +33,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun registerUser(name: String, budget: String, onError: (String) -> Unit, onUserRegistered: (Long) -> Unit) {
-        if (!InputValidator.isValidBudget(budget)) {
+        if (!InputValidator.isValidNumericValue(budget)) {
             onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
             return
         }

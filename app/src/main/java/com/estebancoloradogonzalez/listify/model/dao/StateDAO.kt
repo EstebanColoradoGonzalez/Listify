@@ -15,6 +15,9 @@ interface StateDAO {
     @Query(Queries.SELECT_STATE)
     suspend fun getStates(): List<State>
 
+    @Query(Queries.SELECT_STATE_BY_NAME)
+    suspend fun getStateByName(name: String): State?
+
     @Query(Queries.DELETE_STATES)
     suspend fun deleteAll()
 }

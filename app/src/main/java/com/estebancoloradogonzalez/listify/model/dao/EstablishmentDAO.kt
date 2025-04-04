@@ -15,6 +15,9 @@ interface EstablishmentDAO {
     @Query(Queries.SELECT_ESTABLISHMENTS)
     suspend fun getEstablishments(): List<Establishment>
 
+    @Query(Queries.SELECT_ESTABLISHMENT_BY_NAME)
+    suspend fun getEstablishmentByName(name: String): Establishment?
+
     @Query(Queries.DELETE_ESTABLISHMENTS)
     suspend fun deleteAll()
 }

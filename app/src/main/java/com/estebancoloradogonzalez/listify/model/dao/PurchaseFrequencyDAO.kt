@@ -15,6 +15,9 @@ interface PurchaseFrequencyDAO {
     @Query(Queries.SELECT_PURCHASE_FREQUENCY)
     suspend fun getPurchaseFrequencies(): List<PurchaseFrequency>
 
+    @Query(Queries.SELECT_PURCHASE_FREQUENCY_BY_NAME)
+    suspend fun getPurchaseFrequencyByName(name: String): PurchaseFrequency?
+
     @Query(Queries.DELETE_PURCHASE_FREQUENCIES)
     suspend fun deleteAll()
 }

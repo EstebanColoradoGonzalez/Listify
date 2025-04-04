@@ -15,6 +15,9 @@ interface UnitOfMeasurementDAO {
     @Query(Queries.SELECT_UNIT_OF_MEASUREMENT)
     suspend fun getUnitsOfMeasurement(): List<UnitOfMeasurement>
 
+    @Query(Queries.SELECT_UNIT_OF_MEASUREMENT_BY_NAME)
+    suspend fun getUnitOfMeasurementByName(name: String): UnitOfMeasurement?
+
     @Query(Queries.DELETE_UNITS_OF_MEASUREMENT)
     suspend fun deleteAll()
 }

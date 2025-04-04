@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentCreateProductBinding
 import com.estebancoloradogonzalez.listify.model.entity.Category
@@ -16,6 +17,7 @@ import com.estebancoloradogonzalez.listify.model.entity.PurchaseFrequency
 import com.estebancoloradogonzalez.listify.model.entity.UnitOfMeasurement
 import com.estebancoloradogonzalez.listify.viewmodel.CategoryViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.EstablishmentViewModel
+import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.PurchaseFrequencyViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UnitOfMeasurementViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +30,7 @@ class CreateProductFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: CreateProductFragmentArgs by navArgs()
 
+    private val productViewModel: ProductViewModel by viewModels()
     private val categoryViewModel: CategoryViewModel by viewModels()
     private val establishmentViewModel: EstablishmentViewModel by viewModels()
     private val purchaseFrequencyViewModel: PurchaseFrequencyViewModel by viewModels()
@@ -63,13 +66,22 @@ class CreateProductFragment : Fragment() {
             val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
             val selectedCategory = binding.spinnerCategory.selectedItem.toString()
 
-            Log.d("CreateProductFragment", "Product Name: $productName")
-            Log.d("CreateProductFragment", "Product Price: $productPrice")
-            Log.d("CreateProductFragment", "Product Quantity: $productQuantity")
-            Log.d("CreateProductFragment", "Unit of Measurement: $selectedUnitOfMeasurement")
-            Log.d("CreateProductFragment", "Purchase Frequency: $selectedPurchaseFrequency")
-            Log.d("CreateProductFragment", "Establishment: $selectedEstablishment")
-            Log.d("CreateProductFragment", "Category: $selectedCategory")
+            productViewModel.registerProduct(
+                productName,
+                productPrice,
+                productQuantity,
+                selectedUnitOfMeasurement,
+                selectedPurchaseFrequency,
+                selectedEstablishment,
+                selectedCategory,
+                userId,
+                { errorMessage ->
+                binding.tvError.text = errorMessage
+                binding.tvError.visibility = View.VISIBLE
+            }) {
+                binding.tvError.visibility = View.GONE
+                findNavController().popBackStack()
+            }
         }
     }
 
