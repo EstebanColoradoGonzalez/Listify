@@ -4,4 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.ProductsFragment">
+    <Button
+        android:id="@+id/btnCategories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_categories"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="50dp"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/fragment_create_product"
+        android:src="@drawable/add_button"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"/>
 </FrameLayout>

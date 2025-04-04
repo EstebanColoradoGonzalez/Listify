@@ -2,18 +2,22 @@ package com.estebancoloradogonzalez.listify.model.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.estebancoloradogonzalez.listify.model.entity.Budget
 import com.estebancoloradogonzalez.listify.utils.Queries
 
 @Dao
 interface BudgetDAO {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBudget(budget: Budget)
 
     @Query(Queries.UPDATE_BUDGET)
-    suspend fun updateBudget(userId: Long, newBudget: Double)
+    suspend fun updateBudget(id: Long, newBudget: Double)
+
+    @Query(Queries.SELECT_BUDGET_ID)
+    suspend fun getBudgetId(): Long
 
     @Query(Queries.SELECT_BUDGET)
-    suspend fun getBudgetByUserId(): Budget?
+    suspend fun getBudget(): Budget?
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
+import com.estebancoloradogonzalez.listify.model.entity.Budget
 import com.estebancoloradogonzalez.listify.model.entity.User
 import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
+    private val budgetDao = AppDatabase.getDatabase(application).budgetDao()
     private val userDao = AppDatabase.getDatabase(application).userDao()
 
     private val _user = MutableLiveData<User?>()
@@ -30,14 +32,19 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun registerUser(name: String, onError: (String) -> Unit, onUserRegistered: (Long) -> Unit) {
-        if (!InputValidator.isValidName(name)) {
-            onError(Messages.ENTER_VALID_NAME_MESSAGE)
+    fun registerUser(name: String, budget: String, onError: (String) -> Unit, onUserRegistered: (Long) -> Unit) {
+        if (!InputValidator.isValidNumericValue(budget)) {
+            onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
             return
         }
 
         viewModelScope.launch {
-            val newUser = User(name = name, registrationDate = LocalDateTime.now())
+            val newBudget = Budget(value = budget.toDouble())
+            budgetDao.insertBudget(newBudget)
+
+            val budgetId = budgetDao.getBudgetId()
+
+            val newUser = User(name = name, registrationDate = LocalDateTime.now(), budget = budgetId)
             userDao.insertUser(newUser)
 
             val userId = userDao.getUserId()

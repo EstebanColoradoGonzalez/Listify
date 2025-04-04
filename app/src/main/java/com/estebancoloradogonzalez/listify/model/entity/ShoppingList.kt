@@ -11,20 +11,17 @@ import java.time.LocalDateTime
 
 @Entity(tableName = TextConstants.TABLE_USER,
     foreignKeys = [ForeignKey(
-        entity = Budget::class,
+        entity = User::class,
         parentColumns = [TextConstants.COLUMN_ID],
-        childColumns = [TextConstants.TABLE_BUDGET],
-        onDelete = ForeignKey.CASCADE
+        childColumns = [TextConstants.TABLE_USER],
     )],
-    indices = [Index(value = [TextConstants.TABLE_BUDGET], unique = true)]
-    )
-data class User(
+    indices = [Index(value = [TextConstants.TABLE_USER])]
+)
+data class ShoppingList(
     @PrimaryKey(autoGenerate = true)
     val id: Long = NumericConstants.LONG_ZERO,
-    @ColumnInfo(name = TextConstants.COLUMN_NAME)
-    val name: String,
-    @ColumnInfo(name = TextConstants.COLUMN_REGISTRATION_DATE)
-    val registrationDate: LocalDateTime,
-    @ColumnInfo(name = TextConstants.TABLE_BUDGET)
-    val budget: Long
+    @ColumnInfo(name = TextConstants.COLUMN_DATE)
+    val date: LocalDateTime,
+    @ColumnInfo(name = TextConstants.TABLE_USER)
+    val user: Long
 )

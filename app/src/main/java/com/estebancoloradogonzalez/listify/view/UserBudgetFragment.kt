@@ -9,12 +9,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentUserBudgetBinding
-import com.estebancoloradogonzalez.listify.viewmodel.BudgetViewModel
+import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 
 class UserBudgetFragment : Fragment() {
     private var _binding: FragmentUserBudgetBinding? = null
     private val binding get() = _binding!!
-    private val budgetViewModel: BudgetViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
     private val args: UserBudgetFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -28,18 +28,20 @@ class UserBudgetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userId = args.userId
+        val userName = args.userName
 
         binding.btnStart.setOnClickListener {
             val budgetValue = binding.etBudget.text.toString()
 
-            budgetViewModel.insertBudget(budgetValue, userId) { errorMessage ->
+            userViewModel.registerUser(userName, budgetValue, { errorMessage ->
                 binding.tvBudgetError.text = errorMessage
                 binding.tvBudgetError.visibility = View.VISIBLE
+            }) { userId ->
+                binding.tvBudgetError.visibility = View.GONE
+                val action = UserBudgetFragmentDirections.actionUserBudgetFragmentToShoppingListsFragment(userId)
+                findNavController().navigate(action)
             }
 
-            val action = UserBudgetFragmentDirections.actionUserBudgetFragmentToShoppingListsFragment(userId)
-            findNavController().navigate(action)
         }
     }
 
