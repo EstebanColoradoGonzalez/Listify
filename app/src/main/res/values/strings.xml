@@ -11,4 +11,17 @@
     <string name="fragment_settings">Ajustes</string>
     <string name="fragment_products">Productos</string>
     <string name="update_settings">Actualizar</string>
+    <string name="fragment_categories">Categorías</string>
+    <string name="fragment_create_category">Crear categoría</string>
+    <string name="fragment_create_product">Crear producto</string>
+    <string name="fragment_update_category">Actualizar categoría</string>
+    <string name="fragment_update_product">Actualizar producto</string>
+    <string name="category_name_input">Nombre de la categoría</string>
+    <string name="save">Guardar</string>
+    <string name="update">Actualizar</string>
+    <string name="delete">Eliminar</string>
+    <string name="product_name">Nombre</string>
+    <string name="product_price">Precio</string>
+    <string name="product_quantity">Cantidad</string>
+    <string name="create">Crear</string>
 </resources>
