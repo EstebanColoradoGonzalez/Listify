@@ -45,7 +45,9 @@ object Queries {
     const val UPDATE_PRODUCT_PURCHASE_FREQUENCY_FIELD = "UPDATE product_purchase_frequency SET purchase_frequency = :purchaseFrequency WHERE id = :id"
     const val DELETE_PRODUCT_PURCHASE_FREQUENCY_BY_ID = "DELETE FROM product_purchase_frequency WHERE id = :id"
     const val SELECT_UNIT_OF_MEASUREMENT_BY_NAME = "SELECT * FROM unit_of_measurement WHERE name = :name"
+    const val SELECT_UNIT_OF_MEASUREMENT_BY_ID = "SELECT * FROM unit_of_measurement WHERE id = :id"
     const val SELECT_PURCHASE_FREQUENCY_BY_NAME = "SELECT * FROM purchase_frequency WHERE name = :name"
     const val SELECT_ESTABLISHMENT_BY_NAME = "SELECT * FROM establishment WHERE name = :name"
     const val SELECT_STATE_BY_NAME = "SELECT * FROM state WHERE name = :name"
+    const val SELECT_PRODUCTS_DTO = "SELECT p.id AS id, p.name AS name, p.unit_price AS unitPrice, u.symbol AS unitSymbol FROM product p INNER JOIN amount_unit_of_measurement aum ON p.amount = aum.amount INNER JOIN unit_of_measurement u ON aum.unit_of_measurement = u.id WHERE p.user = :user"
 }

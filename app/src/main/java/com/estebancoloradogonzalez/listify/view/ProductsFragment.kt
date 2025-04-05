@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentProductsBinding
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
+import com.estebancoloradogonzalez.listify.view.adapter.ProductAdapter
+import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
@@ -17,6 +20,7 @@ class ProductsFragment : Fragment() {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private val userViewModel: UserViewModel by viewModels()
+    private val productViewModel: ProductViewModel by viewModels()
     private var userId = NumericConstants.LONG_NEGATIVE_ONE
 
     override fun onCreateView(
@@ -32,6 +36,7 @@ class ProductsFragment : Fragment() {
 
         lifecycleScope.launch {
             userId = userViewModel.getUserId()
+            setupRecyclerView(userId)
         }
 
         binding.fabAddProduct.setOnClickListener {
@@ -42,6 +47,18 @@ class ProductsFragment : Fragment() {
         binding.btnCategories.setOnClickListener {
             val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun setupRecyclerView(user: Long) {
+        binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
+        lifecycleScope.launch {
+            val products = productViewModel.getProducts(user)
+            val adapter = ProductAdapter(products) { product ->
+                val action = ProductsFragmentDirections.actionProductsFragmentToUpdateProductFragment(product.id)
+                findNavController().navigate(action)
+            }
+            binding.rvProducts.adapter = adapter
         }
     }
 
