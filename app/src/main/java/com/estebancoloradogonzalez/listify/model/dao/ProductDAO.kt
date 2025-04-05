@@ -1,6 +1,7 @@
 package com.estebancoloradogonzalez.listify.model.dao
 
 import androidx.room.*
+import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
 import com.estebancoloradogonzalez.listify.model.entity.Product
 import com.estebancoloradogonzalez.listify.utils.Queries
 
@@ -11,6 +12,9 @@ interface ProductDAO {
 
     @Query(Queries.SELECT_PRODUCT_BY_ID)
     suspend fun getById(id: Long): Product?
+
+    @Query(Queries.SELECT_PRODUCTS_DTO)
+    suspend fun getProducts(user: Long): List<ProductDTO>
 
     @Query(Queries.SELECT_PRODUCTS_BY_USER)
     suspend fun getByUser(user: Long): List<Product>

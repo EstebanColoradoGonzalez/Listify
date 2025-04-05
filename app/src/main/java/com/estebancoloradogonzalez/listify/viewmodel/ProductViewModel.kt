@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
+import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
 import com.estebancoloradogonzalez.listify.model.entity.Amount
 import com.estebancoloradogonzalez.listify.model.entity.AmountUnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.Product
@@ -12,7 +13,9 @@ import com.estebancoloradogonzalez.listify.model.entity.ProductEstablishment
 import com.estebancoloradogonzalez.listify.model.entity.ProductPurchaseFrequency
 import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
     private val amountDAO = AppDatabase.getDatabase(application).amountDao()
@@ -25,6 +28,12 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     private val productPurchaseFrenquencyDAO = AppDatabase.getDatabase(application).productPurchaseFrenquencyDao()
     private val purchaseFrenquencyDAO = AppDatabase.getDatabase(application).purchaseFrequencyDao()
     private val unitOfMeasurementDAO = AppDatabase.getDatabase(application).unitOfMeasurementDao()
+
+    suspend fun getProducts(user: Long): List<ProductDTO> {
+        return withContext(Dispatchers.IO) {
+            productDAO.getProducts(user)
+        }
+    }
 
     fun registerProduct(productName: String,
                      productPrice: String,
