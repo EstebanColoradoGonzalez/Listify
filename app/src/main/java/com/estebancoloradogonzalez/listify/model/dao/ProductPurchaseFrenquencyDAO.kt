@@ -6,15 +6,14 @@ import com.estebancoloradogonzalez.listify.utils.Queries
 
 @Dao
 interface ProductPurchaseFrenquencyDAO {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(productPurchaseFrequency: ProductPurchaseFrequency): Long
 
     @Query(Queries.SELECT_PRODUCT_PURCHASE_FREQUENCY_BY_ID)
     suspend fun getById(id: Long): ProductPurchaseFrequency?
 
     @Query(Queries.SELECT_PRODUCT_PURCHASE_FREQUENCY_BY_PRODUCT)
-    suspend fun getByProduct(product: Long): List<ProductPurchaseFrequency>
+    suspend fun getByProduct(product: Long): ProductPurchaseFrequency?
 
     @Query(Queries.UPDATE_PRODUCT_PURCHASE_FREQUENCY_FIELD)
     suspend fun updatePurchaseFrequencyById(id: Long, purchaseFrequency: Long): Int

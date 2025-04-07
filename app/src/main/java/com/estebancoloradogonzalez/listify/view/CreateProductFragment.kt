@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentCreateProductBinding
@@ -66,21 +67,23 @@ class CreateProductFragment : Fragment() {
             val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
             val selectedCategory = binding.spinnerCategory.selectedItem.toString()
 
-            productViewModel.registerProduct(
-                productName,
-                productPrice,
-                productQuantity,
-                selectedUnitOfMeasurement,
-                selectedPurchaseFrequency,
-                selectedEstablishment,
-                selectedCategory,
-                userId,
-                { errorMessage ->
-                binding.tvError.text = errorMessage
-                binding.tvError.visibility = View.VISIBLE
-            }) {
-                binding.tvError.visibility = View.GONE
-                findNavController().popBackStack()
+            lifecycleScope.launch {
+                productViewModel.registerProduct(
+                    productName,
+                    productPrice,
+                    productQuantity,
+                    selectedUnitOfMeasurement,
+                    selectedPurchaseFrequency,
+                    selectedEstablishment,
+                    selectedCategory,
+                    userId,
+                    { errorMessage ->
+                        binding.tvError.text = errorMessage
+                        binding.tvError.visibility = View.VISIBLE
+                    }) {
+                    binding.tvError.visibility = View.GONE
+                    findNavController().popBackStack()
+                }
             }
         }
     }

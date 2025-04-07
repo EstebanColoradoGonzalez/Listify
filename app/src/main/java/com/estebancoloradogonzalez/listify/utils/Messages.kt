@@ -9,4 +9,6 @@ object Messages {
     const val ENTER_VALID_CATEGORY_NAME_MESSAGE: String = "Ingrese un nombre válido para la categoría (solo letras y espacios)."
     const val CATEGORY_NAME_TOO_LONG_MESSAGE: String = "El nombre de la categoría no puede tener mas de 100 caracteres."
     const val CATEGORY_NAME_ALREADY_EXISTS_MESSAGE: String = "Ya existe una categoría con ese nombre."
+    const val BUDGET_EXCEEDED = "La cantidad y precio del producto están excediendo el presupuesto mensual del usuario."
+    const val PRODUCT_ALREADY_EXISTS = "Ya existe un producto con ese nombre."
 }

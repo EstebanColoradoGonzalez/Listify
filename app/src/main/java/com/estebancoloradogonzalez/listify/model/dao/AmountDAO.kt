@@ -6,7 +6,7 @@ import com.estebancoloradogonzalez.listify.utils.Queries
 
 @Dao
 interface AmountDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(amount: Amount): Long
 
     @Query(Queries.SELECT_AMOUNT_BY_ID)

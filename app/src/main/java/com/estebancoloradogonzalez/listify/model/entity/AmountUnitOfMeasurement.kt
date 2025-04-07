@@ -24,8 +24,8 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
         )
     ],
     indices = [
-        Index(value = [TextConstants.TABLE_AMOUNT], unique = true),
-        Index(value = [TextConstants.TABLE_UNIT_OF_MEASUREMENT], unique = true)
+        Index(value = [TextConstants.TABLE_AMOUNT]),
+        Index(value = [TextConstants.TABLE_UNIT_OF_MEASUREMENT])
     ]
 )
 data class AmountUnitOfMeasurement(

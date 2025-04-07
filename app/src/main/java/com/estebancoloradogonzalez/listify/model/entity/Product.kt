@@ -20,7 +20,7 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
         childColumns = [TextConstants.TABLE_USER],
     )],
     indices = [
-        Index(value = [TextConstants.TABLE_AMOUNT], unique = true),
+        Index(value = [TextConstants.TABLE_AMOUNT]),
         Index(value = [TextConstants.TABLE_USER])
     ]
 )

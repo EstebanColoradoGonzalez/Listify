@@ -25,9 +25,9 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
         onDelete = ForeignKey.CASCADE
     )],
     indices = [
-        Index(value = [TextConstants.TABLE_SHOPPING_LIST], unique = true),
+        Index(value = [TextConstants.TABLE_SHOPPING_LIST]),
         Index(value = [TextConstants.TABLE_PRODUCT]),
-        Index(value = [TextConstants.COLUMN_PURCHASED_AMOUNT], unique = true)
+        Index(value = [TextConstants.COLUMN_PURCHASED_AMOUNT])
     ]
 )
 data class ProductShoppingList(

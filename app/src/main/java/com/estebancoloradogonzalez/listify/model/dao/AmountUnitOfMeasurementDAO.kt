@@ -6,7 +6,7 @@ import com.estebancoloradogonzalez.listify.utils.Queries
 
 @Dao
 interface AmountUnitOfMeasurementDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(amountUnit: AmountUnitOfMeasurement): Long
 
     @Query(Queries.SELECT_AMOUNT_UNIT_OF_MEASUREMENT_BY_ID)
