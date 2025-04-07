@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentProductsBinding
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.view.adapter.ProductAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
@@ -47,6 +48,11 @@ class ProductsFragment : Fragment() {
         binding.btnCategories.setOnClickListener {
             val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment()
             findNavController().navigate(action)
+        }
+
+        lifecycleScope.launch {
+            val totalExpenditure = productViewModel.getTotalExpenditure() ?: 0.0
+            binding.tvTotalExpenditure.text = TextConstants.TOTAL_EXPENDITURE + totalExpenditure
         }
     }
 

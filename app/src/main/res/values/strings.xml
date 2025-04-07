@@ -24,4 +24,5 @@
     <string name="product_price">Precio</string>
     <string name="product_quantity">Cantidad</string>
     <string name="create">Crear</string>
+    <string name="gasto_total">Gasto Total: 0.0</string>
 </resources>

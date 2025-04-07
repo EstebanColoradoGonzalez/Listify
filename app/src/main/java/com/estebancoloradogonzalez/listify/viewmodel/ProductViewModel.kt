@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
+import com.estebancoloradogonzalez.listify.model.dto.ProductToUpdateDTO
 import com.estebancoloradogonzalez.listify.model.entity.Amount
 import com.estebancoloradogonzalez.listify.model.entity.AmountUnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.Product
@@ -35,15 +36,33 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun registerProduct(productName: String,
-                     productPrice: String,
-                     productQuantity: String,
-                     selectedUnitOfMeasurement: String,
-                     selectedPurchaseFrequency: String,
-                     selectedEstablishment: String,
-                     selectedCategory: String,
-                     userId: Long,
-                     onError: (String) -> Unit, onSuccess: () -> Unit) {
+    suspend fun getTotalExpenditure(): Double? {
+        return withContext(Dispatchers.IO) {
+            productDAO.getTotalExpenditure()
+        }
+    }
+
+    suspend fun getProductToUpdate(productId: Long): ProductToUpdateDTO? {
+        return withContext(Dispatchers.IO) {
+            productDAO.getProductToUpdate(productId)
+        }
+    }
+
+    suspend fun getProductById(productId: Long): Product? {
+        return withContext(Dispatchers.IO) {
+            productDAO.getById(productId)
+        }
+    }
+
+    suspend fun registerProduct(productName: String,
+                                productPrice: String,
+                                productQuantity: String,
+                                selectedUnitOfMeasurement: String,
+                                selectedPurchaseFrequency: String,
+                                selectedEstablishment: String,
+                                selectedCategory: String,
+                                userId: Long,
+                                onError: (String) -> Unit, onSuccess: () -> Unit) {
         if (!InputValidator.isValidName(productName)) {
             onError(Messages.ENTER_VALID_NAME_MESSAGE)
             return
@@ -56,6 +75,16 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
         if (!InputValidator.isValidNumericValue(productQuantity)) {
             onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
+            return
+        }
+
+        if (productDAO.getByName(productName) != null) {
+            onError(Messages.PRODUCT_ALREADY_EXISTS)
+            return
+        }
+
+        if (productDAO.isTotalExpenditureExceedBudgetToCreate(userId, productPrice.toDouble() * productQuantity.toDouble())) {
+            onError(Messages.BUDGET_EXCEEDED)
             return
         }
 
@@ -95,6 +124,124 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
             }
 
             onSuccess()
+        }
+    }
+
+    suspend fun updateProduct(
+        productName: String,
+        productPrice: String,
+        productQuantity: String,
+        selectedUnitOfMeasurement: String,
+        selectedPurchaseFrequency: String,
+        selectedEstablishment: String,
+        selectedCategory: String,
+        active: Boolean,
+        productId: Long,
+        userId: Long,
+        onError: (String) -> Unit, onSuccess: () -> Unit
+    ) {
+        if (!InputValidator.isValidName(productName)) {
+            onError(Messages.ENTER_VALID_NAME_MESSAGE)
+            return
+        }
+
+        if (!InputValidator.isValidNumericValue(productPrice)) {
+            onError(Messages.ENTER_VALID_PRICE_MESSAGE)
+            return
+        }
+
+        if (!InputValidator.isValidNumericValue(productQuantity)) {
+            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
+            return
+        }
+
+        if (productDAO.getByNameToUpdate(productName, productId) != null) {
+            onError(Messages.PRODUCT_ALREADY_EXISTS)
+            return
+        }
+
+        if (productDAO.isTotalExpenditureExceedBudgetToUpdate(userId, productPrice.toDouble() * productQuantity.toDouble(), productId)) {
+            onError(Messages.BUDGET_EXCEEDED)
+            return
+        }
+
+        viewModelScope.launch {
+            productDAO.updateProductById(productId, productName, productPrice.toDouble(), active)
+
+            val product = productDAO.getById(productId)
+
+            if(product != null) {
+                amountDAO.updateValueById(product.amount, productQuantity.toDouble())
+
+                val amountUnitOfMeasurement = amountUnitOfMeasurementDAO.getByAmount(product.amount)
+                val unitOfMeasurement = unitOfMeasurementDAO.getUnitOfMeasurementByName(selectedUnitOfMeasurement)
+
+                if(amountUnitOfMeasurement != null && unitOfMeasurement != null) {
+                    amountUnitOfMeasurementDAO.updateUnitById(amountUnitOfMeasurement.id, unitOfMeasurement.id)
+                }
+
+                val productEstablishment = productEstablishmentDAO.getByProduct(productId)
+                val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
+
+                if(productEstablishment != null && establishment != null) {
+                    productEstablishmentDAO.updateEstablishmentById(productEstablishment.id, establishment.id)
+                }
+
+                val productPurchaseFrequency = productPurchaseFrenquencyDAO.getByProduct(productId)
+                val purchaseFrequency = purchaseFrenquencyDAO.getPurchaseFrequencyByName(selectedPurchaseFrequency)
+
+                if(productPurchaseFrequency != null && purchaseFrequency != null) {
+                    productPurchaseFrenquencyDAO.updatePurchaseFrequencyById(productPurchaseFrequency.id, purchaseFrequency.id)
+                }
+
+                val productCategory = productCategoryDAO.getByProduct(productId)
+                val category = categoryDAO.getCategoryByName(selectedCategory)
+
+                if(productCategory != null && category != null) {
+                    productCategoryDAO.updateCategoryById(productCategory.id, category.id)
+                }
+
+                onSuccess()
+            }
+        }
+    }
+
+    fun deleteProduct(id: Long, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val product = productDAO.getById(id)
+
+
+            if(product != null) {
+                val productCategory = productCategoryDAO.getByProduct(id)
+
+                if(productCategory != null) {
+                    productCategoryDAO.deleteById(productCategory.id)
+                }
+
+                val productPurchaseFrequency = productPurchaseFrenquencyDAO.getByProduct(id)
+
+                if(productPurchaseFrequency != null) {
+                    productPurchaseFrenquencyDAO.deleteById(productPurchaseFrequency.id)
+                }
+
+                val productEstablishment = productEstablishmentDAO.getByProduct(id)
+
+                if(productEstablishment != null) {
+                    productEstablishmentDAO.deleteById(productEstablishment.id)
+                }
+
+                productDAO.deleteById(id)
+
+                val amountUnitOfMeasurement = amountUnitOfMeasurementDAO.getByAmount(product.amount)
+
+                if(amountUnitOfMeasurement != null) {
+                    amountUnitOfMeasurementDAO.deleteById(amountUnitOfMeasurement.id)
+                }
+
+                amountDAO.deleteById(product.amount)
+
+                onSuccess()
+            }
         }
     }
 }

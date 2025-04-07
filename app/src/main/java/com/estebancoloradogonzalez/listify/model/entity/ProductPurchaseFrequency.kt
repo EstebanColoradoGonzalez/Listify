@@ -24,8 +24,8 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
         )
     ],
     indices = [
-        Index(value = [TextConstants.TABLE_PRODUCT], unique = true),
-        Index(value = [TextConstants.TABLE_PURCHASE_FREQUENCY], unique = true)
+        Index(value = [TextConstants.TABLE_PRODUCT]),
+        Index(value = [TextConstants.TABLE_PURCHASE_FREQUENCY])
     ]
 )
 data class ProductPurchaseFrequency(

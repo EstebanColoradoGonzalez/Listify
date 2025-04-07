@@ -32,8 +32,8 @@ object Queries {
     const val UPDATE_PRODUCT_CATEGORY_CATEGORY = "UPDATE product_category SET category = :category WHERE id = :id"
     const val DELETE_PRODUCT_CATEGORY_BY_ID = "DELETE FROM product_category WHERE id = :id"
     const val SELECT_PRODUCT_BY_ID = "SELECT * FROM product WHERE id = :id"
-    const val SELECT_PRODUCTS_BY_USER = "SELECT * FROM product WHERE user = :user"
     const val SELECT_PRODUCT_BY_NAME = "SELECT * FROM product WHERE name = :name"
+    const val SELECT_PRODUCT_BY_NAME_TO_UPDATE = "SELECT * FROM product WHERE name = :name AND id <> :productId"
     const val UPDATE_PRODUCT_FIELDS = "UPDATE product SET name = :name, unit_price = :unitPrice, is_active = :isActive WHERE id = :id"
     const val DELETE_PRODUCT_BY_ID = "DELETE FROM product WHERE id = :id"
     const val SELECT_PRODUCT_ESTABLISHMENT_BY_ID = "SELECT * FROM product_establishment WHERE id = :id"
@@ -50,4 +50,8 @@ object Queries {
     const val SELECT_ESTABLISHMENT_BY_NAME = "SELECT * FROM establishment WHERE name = :name"
     const val SELECT_STATE_BY_NAME = "SELECT * FROM state WHERE name = :name"
     const val SELECT_PRODUCTS_DTO = "SELECT p.id AS id, p.name AS name, p.unit_price AS unitPrice, u.symbol AS unitSymbol FROM product p INNER JOIN amount_unit_of_measurement aum ON p.amount = aum.amount INNER JOIN unit_of_measurement u ON aum.unit_of_measurement = u.id WHERE p.user = :user"
+    const val SELECT_PRODUCT_TO_UPDATE_DTO = "SELECT p.id AS id, p.name AS name, p.unit_price AS unitPrice, a.value AS amount, u.name AS unitOfMeasurement, pf.name AS purchaseFrequency, e.name AS establishment, c.name AS category, p.is_active AS isActive FROM product p JOIN amount a ON p.amount = a.id JOIN amount_unit_of_measurement aum ON p.amount = aum.amount JOIN unit_of_measurement u ON aum.unit_of_measurement = u.id JOIN product_purchase_frequency ppf ON p.id = ppf.product JOIN purchase_frequency pf ON ppf.purchase_frequency = pf.id JOIN product_establishment pe ON p.id = pe.product JOIN establishment e ON pe.establishment = e.id JOIN product_category pc ON p.id = pc.product JOIN category c ON pc.category = c.id WHERE p.id = :id"
+    const val SELECT_TOTAL_EXPENDITURE = "SELECT SUM(p.unit_price * a.value) FROM product as p INNER JOIN amount as a ON p.amount = a.id WHERE p.is_active = 1"
+    const val SELECT_USER_EXCEED_BUDGET_TO_CREATE = "SELECT CASE WHEN COALESCE(SUM(p.unit_price * a.value), 0) + :additionalCost > b.value THEN 1 ELSE 0 END as exceedsBudget FROM product as p INNER JOIN amount as a ON p.amount = a.id INNER JOIN user as u ON p.user = u.id INNER JOIN budget as b ON u.budget = b.id WHERE u.id = :userId AND p.is_active = 1"
+    const val SELECT_USER_EXCEED_BUDGET_TO_UPDATE = "SELECT CASE WHEN COALESCE(SUM(p.unit_price * a.value), 0) + :additionalCost > b.value THEN 1 ELSE 0 END as exceedsBudget FROM product as p INNER JOIN amount as a ON p.amount = a.id INNER JOIN user as u ON p.user = u.id INNER JOIN budget as b ON u.budget = b.id WHERE u.id = :userId AND p.is_active = 1 AND p.id <> :productId"
 }
