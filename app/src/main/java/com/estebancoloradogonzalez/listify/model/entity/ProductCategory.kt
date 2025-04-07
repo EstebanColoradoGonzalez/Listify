@@ -9,7 +9,7 @@ import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 
 @Entity(
-    tableName = TextConstants.TABLE__PRODUCT_CATEGORY,
+    tableName = TextConstants.TABLE_PRODUCT_CATEGORY,
     foreignKeys = [
         ForeignKey(
             entity = Product::class,

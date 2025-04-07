@@ -18,7 +18,7 @@ object TextConstants {
     const val TABLE_SHOPPING_LIST: String = "shopping_list"
     const val TABLE_PRODUCT_ESTABLISHMENT: String = "product_establishment"
     const val TABLE_PRODUCT_PURCHASE_FREQUENCY: String = "product_purchase_frequency"
-    const val TABLE__PRODUCT_CATEGORY: String = "product_category"
+    const val TABLE_PRODUCT_CATEGORY: String = "product_category"
     const val TABLE_PRODUCT_SHOPPING_LIST: String = "product_shopping_list"
 
     const val COLUMN_ID: String = "id"
