@@ -34,6 +34,12 @@
             android:name="userId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <action
+            android:id="@+id/action_shoppingListsFragment_to_shoppingListFragment"
+            app:destination="@id/shoppingListFragment" />
+        <action
+            android:id="@+id/action_shoppingListsFragment_to_generateShoppingListFragment"
+            app:destination="@id/generateShoppingListFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -97,6 +103,61 @@
         tools:layout="@layout/fragment_update_product" >
         <argument
             android:name="productId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/shoppingListFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.ShoppingListFragment"
+        android:label="fragment_shopping_list"
+        tools:layout="@layout/fragment_shopping_list" >
+        <argument
+            android:name="shoppingListId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_shoppingListFragment_to_establishmentFragment"
+            app:destination="@id/establishmentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generateShoppingListFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.GenerateShoppingListFragment"
+        android:label="fragment_generate_shopping_list"
+        tools:layout="@layout/fragment_generate_shopping_list" >
+        <argument
+            android:name="userId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/establishmentFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.EstablishmentFragment"
+        android:label="fragment_establishment"
+        tools:layout="@layout/fragment_establishment" >
+        <argument android:name="establishmentId"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_establishmentFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_establishmentFragment_to_selectProductFragment"
+            app:destination="@id/selectProductFragment" />
+        <argument
+            android:name="shoppingListId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.ProductFragment"
+        android:label="fragment_product"
+        tools:layout="@layout/fragment_product" >
+        <argument
+            android:name="productShoppingListId"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectProductFragment"
+        android:name="com.estebancoloradogonzalez.listify.view.SelectProductFragment"
+        android:label="fragment_select_product"
+        tools:layout="@layout/fragment_select_product" >
+        <argument android:name="shoppingListId"
             app:argType="long" />
     </fragment>
 </navigation>
