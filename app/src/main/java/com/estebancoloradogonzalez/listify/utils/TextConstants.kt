@@ -76,4 +76,6 @@ object TextConstants {
     const val PETS = "Mascotas"
     const val OTHERS = "Otros"
 
+    const val TOTAL_EXPENDITURE = "Gasto Total: "
+
 }
