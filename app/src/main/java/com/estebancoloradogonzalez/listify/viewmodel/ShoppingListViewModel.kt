@@ -3,7 +3,7 @@ package com.estebancoloradogonzalez.listify.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 class ShoppingListViewModel(application: Application) : AndroidViewModel(application) {
     private val shoppingListDAO = AppDatabase.getDatabase(application).shoppingListDao()
@@ -11,7 +11,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     private val productShoppingListDAO = AppDatabase.getDatabase(application).productShoppingListDao()
     private val productDAO = AppDatabase.getDatabase(application).productDao()
 
-    fun generateShoppingList(date: LocalDate, onError: (String) -> Unit, onSuccess: () -> Unit) {
+    fun generateShoppingList(date: LocalDateTime, onError: (String) -> Unit, onSuccess: () -> Unit) {
 
     }
 }
