@@ -15,7 +15,10 @@ import com.estebancoloradogonzalez.listify.model.dao.ProductCategoryDAO
 import com.estebancoloradogonzalez.listify.model.dao.ProductDAO
 import com.estebancoloradogonzalez.listify.model.dao.ProductEstablishmentDAO
 import com.estebancoloradogonzalez.listify.model.dao.ProductPurchaseFrenquencyDAO
+import com.estebancoloradogonzalez.listify.model.dao.ProductShoppingListDAO
 import com.estebancoloradogonzalez.listify.model.dao.PurchaseFrequencyDAO
+import com.estebancoloradogonzalez.listify.model.dao.ShoppingListDAO
+import com.estebancoloradogonzalez.listify.model.dao.ShoppingListStateDAO
 import com.estebancoloradogonzalez.listify.model.dao.StateDAO
 import com.estebancoloradogonzalez.listify.model.dao.UnitOfMeasurementDAO
 import com.estebancoloradogonzalez.listify.model.dao.UserDAO
@@ -66,6 +69,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun establishmentDao(): EstablishmentDAO
     abstract fun productCategoryDao(): ProductCategoryDAO
     abstract fun productDao(): ProductDAO
+    abstract fun shoppingListDao(): ShoppingListDAO
+    abstract fun shoppingListStateDao(): ShoppingListStateDAO
+    abstract fun productShoppingListDao(): ProductShoppingListDAO
     abstract fun productEstablishmentDao(): ProductEstablishmentDAO
     abstract fun productPurchaseFrenquencyDao(): ProductPurchaseFrenquencyDAO
     abstract fun purchaseFrequencyDao(): PurchaseFrequencyDAO

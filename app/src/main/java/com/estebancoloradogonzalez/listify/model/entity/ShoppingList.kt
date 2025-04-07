@@ -7,7 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 @Entity(tableName = TextConstants.TABLE_USER,
     foreignKeys = [ForeignKey(
@@ -21,7 +21,7 @@ data class ShoppingList(
     @PrimaryKey(autoGenerate = true)
     val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_DATE)
-    val date: LocalDateTime,
+    val date: LocalDate,
     @ColumnInfo(name = TextConstants.TABLE_USER)
     val user: Long
 )
