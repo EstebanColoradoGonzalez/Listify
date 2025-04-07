@@ -30,7 +30,7 @@ object TextConstants {
     const val COLUMN_UNIT_PRICE: String = "unit_price"
     const val COLUMN_IS_ACTIVE: String = "is_active"
     const val COLUMN_IS_READY: String = "is_ready"
-    const val COLUMN_DATE: String = "date"
+    const val COLUMN_SHOPPING_LIST_DATE: String = "shopping_list_date"
     const val COLUMN_PURCHASED_AMOUNT: String = "purchased_amount"
 
     const val STATUS_ACTIVE = "Activa"

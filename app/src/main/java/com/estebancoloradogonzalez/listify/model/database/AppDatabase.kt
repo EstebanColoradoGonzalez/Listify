@@ -31,7 +31,10 @@ import com.estebancoloradogonzalez.listify.model.entity.Product
 import com.estebancoloradogonzalez.listify.model.entity.ProductCategory
 import com.estebancoloradogonzalez.listify.model.entity.ProductEstablishment
 import com.estebancoloradogonzalez.listify.model.entity.ProductPurchaseFrequency
+import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.PurchaseFrequency
+import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
+import com.estebancoloradogonzalez.listify.model.entity.ShoppingListState
 import com.estebancoloradogonzalez.listify.model.entity.State
 import com.estebancoloradogonzalez.listify.model.entity.UnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.User
@@ -53,6 +56,9 @@ import kotlinx.coroutines.launch
         Amount::class,
         Category::class,
         Product::class,
+        ShoppingList::class,
+        ShoppingListState::class,
+        ProductShoppingList::class,
         AmountUnitOfMeasurement::class,
         ProductEstablishment::class,
         ProductPurchaseFrequency::class,

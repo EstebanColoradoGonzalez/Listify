@@ -6,11 +6,11 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
 import com.estebancoloradogonzalez.listify.utils.Queries
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Dao
 interface ShoppingListDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(shoppingList: ShoppingList)
 
     @Query(Queries.SELECT_SHOPPING_LISTS)
@@ -20,7 +20,7 @@ interface ShoppingListDAO {
     suspend fun getShoppingListById(id: Long): ShoppingList?
 
     @Query(Queries.UPDATE_SHOPPING_LIST)
-    suspend fun updateShoppingList(id: Long, newDate: LocalDate)
+    suspend fun updateShoppingList(id: Long, newShoppingListDate: LocalDateTime)
 
     @Query(Queries.DELETE_SHOPPING_LIST)
     suspend fun deleteShoppingListById(id: Long)
