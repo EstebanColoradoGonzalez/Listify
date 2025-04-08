@@ -14,7 +14,7 @@ object Queries {
     const val SELECT_STATE = "SELECT * FROM state"
     const val SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE id = :id"
     const val SELECT_CATEGORY_BY_NAME = "SELECT * FROM category WHERE name = :name"
-    const val SELECT_SHOPPING_LISTS = "SELECT * FROM shopping_list ORDER BY shopping_list_date DESC"
+    const val SELECT_SHOPPING_LISTS = "SELECT s.id as id, s.shopping_list_date as date, st.name as status FROM shopping_list s JOIN shopping_list_state ss ON s.id = ss.shopping_list JOIN state st ON ss.state = st.id WHERE s.user = :user ORDER BY s.shopping_list_date DESC"
     const val SELECT_SHOPPING_LIST_BY_ID = "SELECT * FROM shopping_list WHERE id = :id"
     const val UPDATE_CATEGORY = "UPDATE category SET name = :newName WHERE id = :id"
     const val UPDATE_SHOPPING_LIST = "UPDATE shopping_list SET shopping_list_date = :newShoppingListDate WHERE id = :id"
