@@ -30,4 +30,6 @@
     <string name="fragment_establishment">Establecimiento</string>
     <string name="fragment_product">Producto\n</string>
     <string name="fragment_select_product">Seleccionar producto</string>
+    <string name="generate">Generar</string>
+    <string name="enter_date">Ingresar fecha</string>
 </resources>

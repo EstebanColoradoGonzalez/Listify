@@ -1,12 +1,14 @@
 package com.estebancoloradogonzalez.listify.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class ShoppingListViewModel(application: Application) : AndroidViewModel(application) {
     private val shoppingListDAO = AppDatabase.getDatabase(application).shoppingListDao()
@@ -20,7 +22,8 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun generateShoppingList(date: LocalDateTime, onError: (String) -> Unit, onSuccess: () -> Unit) {
-
+    fun generateShoppingList(date: LocalDateTime, userId: Long, onError: (String) -> Unit, onSuccess: () -> Unit) {
+        Log.d("Fecha: ", date.format(DateTimeFormatter.ISO_DATE))
+        Log.d("User: ", userId.toString())
     }
 }

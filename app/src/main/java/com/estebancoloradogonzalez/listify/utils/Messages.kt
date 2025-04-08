@@ -11,4 +11,5 @@ object Messages {
     const val CATEGORY_NAME_ALREADY_EXISTS_MESSAGE: String = "Ya existe una categoría con ese nombre."
     const val BUDGET_EXCEEDED = "La cantidad y precio del producto están excediendo el presupuesto mensual del usuario."
     const val PRODUCT_ALREADY_EXISTS = "Ya existe un producto con ese nombre."
+    const val ENTER_VALID_DATE_MESSAGE = "La fecha es obligatoría, ingrese una."
 }
