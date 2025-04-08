@@ -40,11 +40,11 @@ class ShoppingListsFragment : Fragment() {
         if (args.userId == -1L) {
             lifecycleScope.launch {
                 userId = userViewModel.getUserId()
-                //setupRecyclerView(userId)
+                setupRecyclerView(userId)
             }
         } else {
             userId = args.userId
-            //setupRecyclerView(userId)
+            setupRecyclerView(userId)
         }
 
         binding.fabGenerateShoppingList.setOnClickListener {
@@ -58,12 +58,10 @@ class ShoppingListsFragment : Fragment() {
         binding.rvShoppingLists.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
             val shoppingLists: List<ShoppingListDTO> = shoppingListViewModel.getShoppingLists(user)
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a")
             val shoppingListsFormatted = shoppingLists.map { list ->
-                list.copy(date = list.date) // La conversión se puede hacer en el onBindViewHolder
+                list.copy(date = list.date)
             }
             val adapter = ShoppingListAdapter(shoppingListsFormatted) { shoppingList ->
-                // Navegar al fragmento de detalle de la lista, pasando el id correspondiente.
                 val action = ShoppingListsFragmentDirections
                     .actionShoppingListsFragmentToShoppingListFragment(shoppingList.id)
                 findNavController().navigate(action)
