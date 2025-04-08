@@ -25,4 +25,9 @@
     <string name="product_quantity">Cantidad</string>
     <string name="create">Crear</string>
     <string name="gasto_total">Gasto Total: 0.0</string>
+    <string name="fragment_shopping_list">Lista de Compras</string>
+    <string name="fragment_generate_shopping_list">Generar lista de compras</string>
+    <string name="fragment_establishment">Establecimiento</string>
+    <string name="fragment_product">Producto\n</string>
+    <string name="fragment_select_product">Seleccionar producto</string>
 </resources>

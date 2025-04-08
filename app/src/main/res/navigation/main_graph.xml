@@ -108,7 +108,7 @@
     <fragment
         android:id="@+id/shoppingListFragment"
         android:name="com.estebancoloradogonzalez.listify.view.ShoppingListFragment"
-        android:label="fragment_shopping_list"
+        android:label="@string/fragment_shopping_list"
         tools:layout="@layout/fragment_shopping_list" >
         <argument
             android:name="shoppingListId"
@@ -120,7 +120,7 @@
     <fragment
         android:id="@+id/generateShoppingListFragment"
         android:name="com.estebancoloradogonzalez.listify.view.GenerateShoppingListFragment"
-        android:label="fragment_generate_shopping_list"
+        android:label="@string/fragment_generate_shopping_list"
         tools:layout="@layout/fragment_generate_shopping_list" >
         <argument
             android:name="userId"
@@ -129,7 +129,7 @@
     <fragment
         android:id="@+id/establishmentFragment"
         android:name="com.estebancoloradogonzalez.listify.view.EstablishmentFragment"
-        android:label="fragment_establishment"
+        android:label="@string/fragment_establishment"
         tools:layout="@layout/fragment_establishment" >
         <argument android:name="establishmentId"
             app:argType="long" />
@@ -146,7 +146,7 @@
     <fragment
         android:id="@+id/productFragment"
         android:name="com.estebancoloradogonzalez.listify.view.ProductFragment"
-        android:label="fragment_product"
+        android:label="@string/fragment_product"
         tools:layout="@layout/fragment_product" >
         <argument
             android:name="productShoppingListId"
@@ -155,7 +155,7 @@
     <fragment
         android:id="@+id/selectProductFragment"
         android:name="com.estebancoloradogonzalez.listify.view.SelectProductFragment"
-        android:label="fragment_select_product"
+        android:label="@string/fragment_select_product"
         tools:layout="@layout/fragment_select_product" >
         <argument android:name="shoppingListId"
             app:argType="long" />
