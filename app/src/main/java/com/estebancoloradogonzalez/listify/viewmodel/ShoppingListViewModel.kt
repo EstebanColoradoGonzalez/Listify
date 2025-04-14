@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
+import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -25,5 +26,21 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     fun generateShoppingList(date: LocalDateTime, userId: Long, onError: (String) -> Unit, onSuccess: () -> Unit) {
         Log.d("Fecha: ", date.format(DateTimeFormatter.ISO_DATE))
         Log.d("User: ", userId.toString())
+    }
+
+    suspend fun getShoppingListsToAnalyze(user: Long): List<ShoppingListToAnalyzeDTO> {
+        return withContext(Dispatchers.IO) {
+            val shoppingLists = shoppingListDAO.getShoppingLists(user)
+
+            shoppingLists.map { shoppingListDTO ->
+                val products = shoppingListDAO.getProductsToAnalyzeDTO(shoppingListDTO.id)
+                ShoppingListToAnalyzeDTO(
+                    id = shoppingListDTO.id,
+                    date = shoppingListDTO.date,
+                    status = shoppingListDTO.status,
+                    products = products
+                )
+            }
+        }
     }
 }
