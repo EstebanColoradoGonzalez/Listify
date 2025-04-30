@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentGenerateShoppingListBinding
 import com.estebancoloradogonzalez.listify.utils.Messages
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -51,16 +53,18 @@ class GenerateShoppingListFragment : Fragment() {
                 binding.tvDateError.visibility = View.VISIBLE
             } else {
                 binding.tvDateError.visibility = View.GONE
-                shoppingListViewModel.generateShoppingList(date, userId,
-                    onError = { errorMessage ->
-                        binding.tvDateError.text = errorMessage
-                        binding.tvDateError.visibility = View.VISIBLE
-                    },
-                    onSuccess = {
-                        binding.tvDateError.visibility = View.GONE
-                        requireActivity().onBackPressed()
-                    }
-                )
+                lifecycleScope.launch {
+                    shoppingListViewModel.generateShoppingList(date, userId,
+                        onError = { errorMessage ->
+                            binding.tvDateError.text = errorMessage
+                            binding.tvDateError.visibility = View.VISIBLE
+                        },
+                        onSuccess = {
+                            binding.tvDateError.visibility = View.GONE
+                            requireActivity().onBackPressed()
+                        }
+                    )
+                }
             }
         }
     }

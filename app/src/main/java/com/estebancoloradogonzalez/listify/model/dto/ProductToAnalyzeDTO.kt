@@ -1,5 +1,7 @@
 package com.estebancoloradogonzalez.listify.model.dto
 
+import java.time.LocalDateTime
+
 data class ProductToAnalyzeDTO(
     val id: Long,
     val name: String,
@@ -10,4 +12,5 @@ data class ProductToAnalyzeDTO(
     val purchaseFrequency: String,
     val establishment: String,
     val category: String,
+    val registrationDate: LocalDateTime,
 )

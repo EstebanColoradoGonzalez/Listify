@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 @Dao
 interface ShoppingListDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(shoppingList: ShoppingList)
+    suspend fun insert(shoppingList: ShoppingList): Long
 
     @Query(Queries.SELECT_SHOPPING_LISTS)
     suspend fun getShoppingLists(user: Long): List<ShoppingListDTO>
@@ -21,8 +21,14 @@ interface ShoppingListDAO {
     @Query(Queries.SELECT_PRODUCTS_TO_ANALYZE)
     suspend fun getProductsToAnalyzeDTO(shoppingList: Long): List<ProductToAnalyzeDTO>
 
+    @Query(Queries.SELECT_MOST_RECENT_SHOPPING_LIST_DATE)
+    suspend fun getMostRecentShoppingListDate(user: Long): LocalDateTime?
+
     @Query(Queries.SELECT_SHOPPING_LIST_BY_ID)
     suspend fun getShoppingListById(id: Long): ShoppingList?
+
+    @Query(Queries.SELECT_LAST_SHOPPING_LIST)
+    suspend fun getLastShoppingList(user: Long): ShoppingListDTO?
 
     @Query(Queries.UPDATE_SHOPPING_LIST)
     suspend fun updateShoppingList(id: Long, newShoppingListDate: LocalDateTime)

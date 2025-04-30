@@ -7,6 +7,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
+import java.time.LocalDateTime
 
 @Entity(tableName = TextConstants.TABLE_PRODUCT,
     foreignKeys = [ForeignKey(
@@ -36,5 +37,7 @@ data class Product(
     @ColumnInfo(name = TextConstants.TABLE_AMOUNT)
     val amount: Long,
     @ColumnInfo(name = TextConstants.TABLE_USER)
-    val user: Long
+    val user: Long,
+    @ColumnInfo(name = TextConstants.COLUMN_REGISTRATION_DATE)
+    val registrationDate: LocalDateTime
 )
