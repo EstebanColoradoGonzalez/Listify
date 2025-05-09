@@ -8,6 +8,7 @@ import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
+import com.estebancoloradogonzalez.listify.model.entity.ShoppingListState
 import com.estebancoloradogonzalez.listify.utils.Messages
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
@@ -21,7 +22,9 @@ import java.time.temporal.ChronoUnit
 class ShoppingListViewModel(application: Application) : AndroidViewModel(application) {
     private val shoppingListDAO = AppDatabase.getDatabase(application).shoppingListDao()
     private val productShoppingListDAO = AppDatabase.getDatabase(application).productShoppingListDao()
+    private val shoppingListStateDAO = AppDatabase.getDatabase(application).shoppingListStateDao()
     private val productDAO = AppDatabase.getDatabase(application).productDao()
+    private val stateDAO = AppDatabase.getDatabase(application).stateDao()
 
     suspend fun getShoppingLists(user: Long): List<ShoppingListDTO> {
         return withContext(Dispatchers.IO) {
@@ -30,35 +33,46 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     }
 
     suspend fun generateShoppingList(date: LocalDateTime, userId: Long, onError: (String) -> Unit, onSuccess: () -> Unit) {
-        val lastDateShoppingList = shoppingListDAO.getMostRecentShoppingListDate(userId)
         val products = productDAO.getProductsToAnalyzeDTO(userId)
         val lastShoppingList = shoppingListDAO.getLastShoppingList(userId)
         val allShoppingList = getShoppingListsToAnalyze(userId)
-        val weeksBetweenDates = ChronoUnit.WEEKS.between(lastDateShoppingList, date)
-
-        if (date.isBefore(lastDateShoppingList)) {
-            onError(Messages.DATE_IS_BEFORE_LAST_SHOPPING_LIST + date.format(DateTimeFormatter.ISO_DATE))
-            return
-        }
-
-        if (lastDateShoppingList != null && weeksBetweenDates < NumericConstants.POSITIVE_ONE) {
-            onError(Messages.DATE_IS_NOT_SEVEN_DAYS_AFTER)
-            return
-        }
 
         if (products.isEmpty()) {
             onError(Messages.THERE_ARE_NOT_ACTIVE_PRODUCTS)
             return
         }
 
-        if (lastShoppingList != null && lastShoppingList.status == TextConstants.STATUS_ACTIVE) {
-            onError(Messages.THERE_IS_AN_ACTIVE_SHOPPING_LIST)
-            return
+        if(lastShoppingList != null) {
+            val lastDateShoppingList = lastShoppingList.date
+            val weeksBetweenDates = ChronoUnit.WEEKS.between(lastDateShoppingList, date)
+
+            if (date.isBefore(lastDateShoppingList)) {
+                onError(Messages.DATE_IS_BEFORE_LAST_SHOPPING_LIST + date.format(DateTimeFormatter.ISO_DATE))
+                return
+            }
+
+            if (weeksBetweenDates < NumericConstants.POSITIVE_ONE) {
+                onError(Messages.DATE_IS_NOT_SEVEN_DAYS_AFTER)
+                return
+            }
+
+            if (lastShoppingList.status == TextConstants.STATUS_ACTIVE) {
+                onError(Messages.THERE_IS_AN_ACTIVE_SHOPPING_LIST)
+                return
+            }
         }
 
         viewModelScope.launch {
             val shoppingList = ShoppingList(shoppingListDate = date, user = userId)
             val shoppingListId = shoppingListDAO.insert(shoppingList)
+
+            val state = stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
+
+            if(state != null) {
+                val shoppingListState = ShoppingListState(shoppingList = shoppingListId, state = state.id)
+
+                shoppingListStateDAO.insert(shoppingListState)
+            }
 
             if(allShoppingList.isEmpty()) {
                 products.forEach{ product ->
