@@ -18,16 +18,10 @@ import com.estebancoloradogonzalez.listify.utils.TextConstants
         entity = Product::class,
         parentColumns = [TextConstants.COLUMN_ID],
         childColumns = [TextConstants.TABLE_PRODUCT],
-    ), ForeignKey(
-        entity = Amount::class,
-        parentColumns = [TextConstants.COLUMN_ID],
-        childColumns = [TextConstants.COLUMN_PURCHASED_AMOUNT],
-        onDelete = ForeignKey.CASCADE
     )],
     indices = [
         Index(value = [TextConstants.TABLE_SHOPPING_LIST]),
-        Index(value = [TextConstants.TABLE_PRODUCT]),
-        Index(value = [TextConstants.COLUMN_PURCHASED_AMOUNT])
+        Index(value = [TextConstants.TABLE_PRODUCT])
     ]
 )
 data class ProductShoppingList(
@@ -35,12 +29,12 @@ data class ProductShoppingList(
     val id: Long = NumericConstants.LONG_ZERO,
     @ColumnInfo(name = TextConstants.COLUMN_UNIT_PRICE)
     val unitPrice: Double,
-    @ColumnInfo(name = TextConstants.COLUMN_IS_ACTIVE)
+    @ColumnInfo(name = TextConstants.COLUMN_PURCHASED_AMOUNT)
+    val purchasedAmount: Double,
+    @ColumnInfo(name = TextConstants.COLUMN_IS_READY)
     val isReady: Boolean,
     @ColumnInfo(name = TextConstants.TABLE_SHOPPING_LIST)
     val shoppingList: Long,
     @ColumnInfo(name = TextConstants.TABLE_PRODUCT)
-    val product: Long,
-    @ColumnInfo(name = TextConstants.COLUMN_PURCHASED_AMOUNT)
-    val purchasedAmount: Long
+    val product: Long
 )

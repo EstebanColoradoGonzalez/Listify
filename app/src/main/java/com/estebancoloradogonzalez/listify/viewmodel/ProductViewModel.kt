@@ -17,6 +17,7 @@ import com.estebancoloradogonzalez.listify.utils.Messages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
     private val amountDAO = AppDatabase.getDatabase(application).amountDao()
@@ -99,7 +100,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
                 amountUnitOfMeasurementDAO.insert(amountUnitOfMeasurement)
             }
 
-            val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = true, amount = amountId, user = userId)
+            val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = true, amount = amountId, user = userId, registrationDate = LocalDateTime.now())
             val productId = productDAO.insert(product)
 
             val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
