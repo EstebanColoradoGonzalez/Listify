@@ -131,8 +131,8 @@
         android:name="com.estebancoloradogonzalez.listify.view.EstablishmentFragment"
         android:label="@string/fragment_establishment"
         tools:layout="@layout/fragment_establishment" >
-        <argument android:name="establishmentId"
-            app:argType="long" />
+        <argument android:name="establishmentName"
+            app:argType="string" />
         <action
             android:id="@+id/action_establishmentFragment_to_productFragment"
             app:destination="@id/productFragment" />

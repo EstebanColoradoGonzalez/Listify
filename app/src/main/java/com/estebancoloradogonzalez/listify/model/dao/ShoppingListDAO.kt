@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.estebancoloradogonzalez.listify.model.dto.EstablishmentNameDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
@@ -35,4 +36,7 @@ interface ShoppingListDAO {
 
     @Query(Queries.DELETE_SHOPPING_LIST)
     suspend fun deleteShoppingListById(id: Long)
+
+    @Query(Queries.GET_ESTABLISHMENTS_FOR_SHOPPING_LIST)
+    suspend fun getEstablishmentsForShoppingList(shoppingListId: Long): List<EstablishmentNameDTO>
 }
