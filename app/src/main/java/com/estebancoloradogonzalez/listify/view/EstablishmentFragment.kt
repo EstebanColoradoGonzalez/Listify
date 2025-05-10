@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,13 +37,15 @@ class EstablishmentFragment : Fragment() {
         val shoppingListId = args.shoppingListId
         val establishmentName = args.establishmentName
 
+        (activity as? AppCompatActivity)?.supportActionBar?.title = establishmentName
+
         binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
         adapter = ProductEstablishmentAdapter(
             products = listOf(),
             onItemClick = { product ->
                 val action = EstablishmentFragmentDirections
-                    .actionEstablishmentFragmentToProductFragment(product.productShoppingListId)
+                    .actionEstablishmentFragmentToProductFragment(product.productShoppingListId, product.productName)
                 findNavController().navigate(action)
             },
             onReadyChange = { productId, isReady ->

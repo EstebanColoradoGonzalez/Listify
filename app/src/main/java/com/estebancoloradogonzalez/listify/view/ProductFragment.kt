@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +18,7 @@ class ProductFragment : Fragment() {
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val args: ProductFragmentArgs by navArgs()
-    private val shoppingListViewModel: ProductShoppingListViewModel by viewModels()
+    private val productShoppingListViewModel: ProductShoppingListViewModel by viewModels()
 
     private var initialPrice: String = ""
     private var initialQuantity: String = ""
@@ -33,11 +34,14 @@ class ProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val productShoppingListId = args.productShoppingListId
+        val productName = args.productName
+
+        (activity as? AppCompatActivity)?.supportActionBar?.title = productName
 
         binding.btnUpdateProduct.isEnabled = false
 
         lifecycleScope.launch {
-            val detail = shoppingListViewModel.getProductShoppingListDetailById(productShoppingListId)
+            val detail = productShoppingListViewModel.getProductShoppingListDetailById(productShoppingListId)
             detail?.let { product ->
                 initialPrice = product.unitPrice.toString()
                 initialQuantity = product.purchasedAmount.toString()
@@ -55,7 +59,7 @@ class ProductFragment : Fragment() {
             val newQuantity = binding.etProductQuantity.text.toString().trim()
 
             lifecycleScope.launch {
-                shoppingListViewModel.updateProduct(productShoppingListId, newPrice, newQuantity,
+                productShoppingListViewModel.updateProduct(productShoppingListId, newPrice, newQuantity,
                     { errorMessage ->
                         binding.tvError.text = errorMessage
                         binding.tvError.visibility = View.VISIBLE
@@ -67,7 +71,7 @@ class ProductFragment : Fragment() {
         }
 
         binding.btnDeleteProduct.setOnClickListener {
-            shoppingListViewModel.deleteProduct(productShoppingListId,
+            productShoppingListViewModel.deleteProduct(productShoppingListId,
                 onSuccess = {
                     findNavController().popBackStack()
                 })
