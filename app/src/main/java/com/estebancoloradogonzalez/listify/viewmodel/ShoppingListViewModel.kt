@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
 import com.estebancoloradogonzalez.listify.model.dto.EstablishmentNameDTO
+import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListWithEstablishmentDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
@@ -36,6 +37,12 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     suspend fun getEstablishmentFromAShoppingList(shoppingList: Long): List<EstablishmentNameDTO> {
         return withContext(Dispatchers.IO) {
             shoppingListDAO.getEstablishmentsForShoppingList(shoppingList)
+        }
+    }
+
+    suspend fun getProductsByShoppingListAndEstablishment(shoppingListId: Long, establishmentName: String): List<ProductShoppingListWithEstablishmentDTO> {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
         }
     }
 
