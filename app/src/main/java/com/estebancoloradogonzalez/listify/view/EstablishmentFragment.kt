@@ -21,6 +21,8 @@ class EstablishmentFragment : Fragment() {
     private val args: EstablishmentFragmentArgs by navArgs()
     private val shoppingListViewModel: ShoppingListViewModel by viewModels()
 
+    private lateinit var adapter: ProductEstablishmentAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,15 +38,27 @@ class EstablishmentFragment : Fragment() {
 
         binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
-        lifecycleScope.launch {
-            val products = shoppingListViewModel
-                .getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
-            val adapter = ProductEstablishmentAdapter(products) { product ->
+        // Inicializa el adapter vacío
+        adapter = ProductEstablishmentAdapter(
+            products = listOf(),
+            onItemClick = { product ->
                 val action = EstablishmentFragmentDirections
                     .actionEstablishmentFragmentToProductFragment(product.productShoppingListId)
                 findNavController().navigate(action)
+            },
+            onReadyChange = { productId, isReady ->
+                lifecycleScope.launch {
+                    shoppingListViewModel.updateIsReadyById(productId, isReady)
+                    // Refresca la lista después de actualizar en BD
+                    reloadProducts(shoppingListId, establishmentName)
+                }
             }
-            binding.rvProducts.adapter = adapter
+        )
+        binding.rvProducts.adapter = adapter
+
+        // Carga inicial
+        lifecycleScope.launch {
+            reloadProducts(shoppingListId, establishmentName)
         }
 
         binding.fabAddProduct.setOnClickListener {
@@ -54,8 +68,16 @@ class EstablishmentFragment : Fragment() {
         }
     }
 
+    private suspend fun reloadProducts(shoppingListId: Long, establishmentName: String) {
+        val products = shoppingListViewModel
+            .getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
+            .sortedBy { it.isReady }
+        adapter.updateProducts(products)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
+

@@ -46,6 +46,13 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    suspend fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean) {
+        viewModelScope.launch {
+            productShoppingListDAO.updateIsReadyById(productShoppingListId, isReady)
+        }
+    }
+
+
     suspend fun generateShoppingList(date: LocalDateTime, userId: Long, onError: (String) -> Unit, onSuccess: () -> Unit) {
         val products = productDAO.getProductsToAnalyzeDTO(userId)
         val lastShoppingList = shoppingListDAO.getLastShoppingList(userId)

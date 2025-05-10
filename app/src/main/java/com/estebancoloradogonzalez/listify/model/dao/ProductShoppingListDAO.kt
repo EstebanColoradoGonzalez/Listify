@@ -23,4 +23,7 @@ interface ProductShoppingListDAO {
 
     @Query(Queries.DELETE_PRODUCT_SHOPPING_LIST_BY_ID)
     suspend fun deleteById(id: Long): Int
+
+    @Query(Queries.UPDATE_IS_READY_BY_ID)
+    suspend fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean)
 }
