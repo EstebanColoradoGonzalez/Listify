@@ -11,4 +11,9 @@ object Messages {
     const val CATEGORY_NAME_ALREADY_EXISTS_MESSAGE: String = "Ya existe una categoría con ese nombre."
     const val BUDGET_EXCEEDED = "La cantidad y precio del producto están excediendo el presupuesto mensual del usuario."
     const val PRODUCT_ALREADY_EXISTS = "Ya existe un producto con ese nombre."
+    const val ENTER_VALID_DATE_MESSAGE = "La fecha es obligatoría, ingrese una."
+    const val DATE_IS_BEFORE_LAST_SHOPPING_LIST = "La fecha no puede ser anterior o igual a la fecha de la ultima lista de compras generada, la cual es: "
+    const val DATE_IS_NOT_SEVEN_DAYS_AFTER = "Aun no han pasado 7 días desde la ultima lista de compras"
+    const val THERE_ARE_NOT_ACTIVE_PRODUCTS = "No hay productos activos registrados."
+    const val THERE_IS_AN_ACTIVE_SHOPPING_LIST = "Todavia hay una lista de compras activa."
 }

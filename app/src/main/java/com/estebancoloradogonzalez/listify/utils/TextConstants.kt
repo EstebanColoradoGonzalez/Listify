@@ -20,6 +20,7 @@ object TextConstants {
     const val TABLE_PRODUCT_PURCHASE_FREQUENCY: String = "product_purchase_frequency"
     const val TABLE_PRODUCT_CATEGORY: String = "product_category"
     const val TABLE_PRODUCT_SHOPPING_LIST: String = "product_shopping_list"
+    const val TABLE_SHOPPING_LIST_STATE: String = "shopping_list_state"
 
     const val COLUMN_ID: String = "id"
     const val COLUMN_VALUE: String = "value"
@@ -28,7 +29,8 @@ object TextConstants {
     const val COLUMN_REGISTRATION_DATE: String = "registration_date"
     const val COLUMN_UNIT_PRICE: String = "unit_price"
     const val COLUMN_IS_ACTIVE: String = "is_active"
-    const val COLUMN_DATE: String = "date"
+    const val COLUMN_IS_READY: String = "is_ready"
+    const val COLUMN_SHOPPING_LIST_DATE: String = "shopping_list_date"
     const val COLUMN_PURCHASED_AMOUNT: String = "purchased_amount"
 
     const val STATUS_ACTIVE = "Activa"
