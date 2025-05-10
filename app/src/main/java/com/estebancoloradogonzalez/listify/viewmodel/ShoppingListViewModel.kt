@@ -46,7 +46,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    suspend fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean) {
+    fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean) {
         viewModelScope.launch {
             productShoppingListDAO.updateIsReadyById(productShoppingListId, isReady)
         }

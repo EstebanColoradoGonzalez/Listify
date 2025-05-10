@@ -36,7 +36,7 @@ object Queries {
     const val SELECT_PRODUCT_SHOPPING_LIST_BY_SHOPPING_LIST = "SELECT * FROM product_shopping_list WHERE shopping_list = :shoppingList"
     const val UPDATE_AMOUNT_UNIT_OF_MEASUREMENT_UNIT = "UPDATE amount_unit_of_measurement SET unit_of_measurement = :unitOfMeasurement WHERE id = :id"
     const val UPDATE_SHOPPING_LIST_STATE = "UPDATE shopping_list_state SET state = :state WHERE id = :id"
-    const val UPDATE_PRODUCT_SHOPPING_LIST = "UPDATE product_shopping_list SET unit_price = :unitPrice, purchased_amount = :purchasedAmount, is_ready = :isReady WHERE id = :id"
+    const val UPDATE_PRODUCT_SHOPPING_LIST = "UPDATE product_shopping_list SET unit_price = :unitPrice, purchased_amount = :purchasedAmount WHERE id = :id"
     const val DELETE_PRODUCT_SHOPPING_LIST_BY_ID = "DELETE FROM product_shopping_list WHERE id = :id"
     const val DELETE_AMOUNT_UNIT_OF_MEASUREMENT_BY_ID = "DELETE FROM amount_unit_of_measurement WHERE id = :id"
     const val DELETE_SHOPPING_LIST_STATE_BY_ID = "DELETE FROM shopping_list_state WHERE id = :id"
@@ -73,4 +73,5 @@ object Queries {
     const val GET_ESTABLISHMENTS_FOR_SHOPPING_LIST = "SELECT DISTINCT e.name FROM product_shopping_list AS psl INNER JOIN product_establishment AS pe ON psl.product = pe.product INNER JOIN establishment AS e ON pe.establishment = e.id WHERE psl.shopping_list = :shoppingListId"
     const val GET_PRODUCTS_BY_SHOPPING_LIST_AND_ESTABLISHMENT = "SELECT psl.id AS productShoppingListId, p.name AS productName, a.value AS amountValue, uom.symbol AS unitSymbol, psl.unit_price AS unitPrice, psl.is_ready AS isReady FROM product_shopping_list AS psl INNER JOIN product AS p ON psl.product = p.id INNER JOIN amount AS a ON p.amount = a.id INNER JOIN amount_unit_of_measurement AS aum ON a.id = aum.amount INNER JOIN unit_of_measurement AS uom ON aum.unit_of_measurement = uom.id INNER JOIN product_establishment AS pe ON p.id = pe.product INNER JOIN establishment AS e ON pe.establishment = e.id WHERE psl.shopping_list = :shoppingListId AND e.name = :establishmentName"
     const val UPDATE_IS_READY_BY_ID = "UPDATE product_shopping_list SET is_ready = :isReady WHERE id = :productShoppingListId"
+    const val GET_PRODUCT_SHOPPING_LIST_DETAIL_BY_ID = "SELECT psl.id AS id, psl.unit_price AS unitPrice, psl.purchased_amount AS purchasedAmount, uom.name AS unitOfMeasurementName FROM product_shopping_list AS psl INNER JOIN product AS p ON psl.product = p.id INNER JOIN amount AS a ON p.amount = a.id INNER JOIN amount_unit_of_measurement AS aum ON a.id = aum.amount INNER JOIN unit_of_measurement AS uom ON aum.unit_of_measurement = uom.id WHERE psl.id = :productShoppingListId"
 }
