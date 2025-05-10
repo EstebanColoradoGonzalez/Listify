@@ -159,5 +159,8 @@
         tools:layout="@layout/fragment_select_product" >
         <argument android:name="shoppingListId"
             app:argType="long" />
+        <argument
+            android:name="establishmentName"
+            app:argType="string" />
     </fragment>
 </navigation>

@@ -37,7 +37,7 @@ class ProductFragment : Fragment() {
         binding.btnUpdateProduct.isEnabled = false
 
         lifecycleScope.launch {
-            val detail = shoppingListViewModel.get(productShoppingListId)
+            val detail = shoppingListViewModel.getProductShoppingListDetailById(productShoppingListId)
             detail?.let { product ->
                 initialPrice = product.unitPrice.toString()
                 initialQuantity = product.purchasedAmount.toString()

@@ -32,4 +32,6 @@
     <string name="fragment_select_product">Seleccionar producto</string>
     <string name="generate">Generar</string>
     <string name="enter_date">Ingresar fecha</string>
+    <string name="no_products_to_select">Ya todos los productos de este establecimiento fueron seleccionados.</string>
+    <string name="select_product">Seleccionar producto</string>
 </resources>

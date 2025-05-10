@@ -26,7 +26,7 @@ class EstablishmentFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentEstablishmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,7 +38,6 @@ class EstablishmentFragment : Fragment() {
 
         binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
-        // Inicializa el adapter vacío
         adapter = ProductEstablishmentAdapter(
             products = listOf(),
             onItemClick = { product ->
@@ -49,21 +48,19 @@ class EstablishmentFragment : Fragment() {
             onReadyChange = { productId, isReady ->
                 lifecycleScope.launch {
                     shoppingListViewModel.updateIsReadyById(productId, isReady)
-                    // Refresca la lista después de actualizar en BD
                     reloadProducts(shoppingListId, establishmentName)
                 }
             }
         )
         binding.rvProducts.adapter = adapter
 
-        // Carga inicial
         lifecycleScope.launch {
             reloadProducts(shoppingListId, establishmentName)
         }
 
         binding.fabAddProduct.setOnClickListener {
             val action = EstablishmentFragmentDirections
-                .actionEstablishmentFragmentToSelectProductFragment(shoppingListId)
+                .actionEstablishmentFragmentToSelectProductFragment(shoppingListId, establishmentName)
             findNavController().navigate(action)
         }
     }
