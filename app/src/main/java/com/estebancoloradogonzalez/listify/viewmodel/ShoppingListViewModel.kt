@@ -35,6 +35,15 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    suspend fun getTotalAmountByShoppingListAndEstablishment(
+        shoppingListId: Long,
+        establishmentName: String
+    ): Double? {
+        return withContext(Dispatchers.IO) {
+            productShoppingListDAO.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName)
+        }
+    }
+
     suspend fun getEstablishmentFromAShoppingList(shoppingList: Long): List<EstablishmentNameDTO> {
         return withContext(Dispatchers.IO) {
             shoppingListDAO.getEstablishmentsForShoppingList(shoppingList)
@@ -198,6 +207,6 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(3)
         TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(4)
         TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(6)
-        else -> throw IllegalArgumentException("Frecuencia no soportada: $purchaseFrequency")
+        else -> throw IllegalArgumentException(Messages.NOT_SUPPORTED_FREQUENCY + purchaseFrequency)
     }
 }

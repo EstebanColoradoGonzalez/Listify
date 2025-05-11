@@ -30,4 +30,10 @@ interface ProductShoppingListDAO {
 
     @Query(Queries.UPDATE_IS_READY_BY_ID)
     suspend fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean)
+
+    @Query(Queries.GET_TOTAL_AMOUNT_BY_SHOPPING_LIST_AND_ESTABLISHMENT)
+    suspend fun getTotalAmountByShoppingListAndEstablishment(
+        shoppingListId: Long,
+        establishmentName: String
+    ): Double?
 }

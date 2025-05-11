@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentEstablishmentBinding
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.view.adapter.ProductEstablishmentAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
 import kotlinx.coroutines.launch
@@ -52,6 +53,7 @@ class EstablishmentFragment : Fragment() {
                 lifecycleScope.launch {
                     shoppingListViewModel.updateIsReadyById(productId, isReady)
                     reloadProducts(shoppingListId, establishmentName)
+                    reloadTotal(shoppingListId, establishmentName)
                 }
             }
         )
@@ -59,6 +61,7 @@ class EstablishmentFragment : Fragment() {
 
         lifecycleScope.launch {
             reloadProducts(shoppingListId, establishmentName)
+            reloadTotal(shoppingListId, establishmentName)
         }
 
         binding.fabAddProduct.setOnClickListener {
@@ -73,6 +76,11 @@ class EstablishmentFragment : Fragment() {
             .getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
             .sortedBy { it.isReady }
         adapter.updateProducts(products)
+    }
+
+    private suspend fun reloadTotal(shoppingListId: Long, establishmentName: String) {
+        val total = shoppingListViewModel.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName) ?: 0.0
+        binding.tvTotalAmount.text = TextConstants.TOTAL_EXPENDITURE + String.format(TextConstants.AMOUNT_FORMAT, total)
     }
 
     override fun onDestroyView() {
