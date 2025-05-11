@@ -116,6 +116,9 @@
         <action
             android:id="@+id/action_shoppingListFragment_to_establishmentFragment"
             app:destination="@id/establishmentFragment" />
+        <argument
+            android:name="userId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/generateShoppingListFragment"

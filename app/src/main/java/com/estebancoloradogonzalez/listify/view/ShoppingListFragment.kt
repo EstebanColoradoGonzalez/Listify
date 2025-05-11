@@ -35,6 +35,7 @@ class ShoppingListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val shoppingListId = args.shoppingListId
+        val userId = args.userId
 
         lifecycleScope.launch {
             val info = shoppingListViewModel.getShoppingListDateAndTotalAmount(shoppingListId)
@@ -53,18 +54,22 @@ class ShoppingListFragment : Fragment() {
 
         binding.btnCompleteShoppingList.setOnClickListener {
             shoppingListViewModel.completeOrCancelShoppingList(
+                userId,
                 shoppingListId,
                 TextConstants.STATUS_COMPLETED
-            )
-            findNavController().popBackStack()
+            ) {
+                findNavController().popBackStack()
+            }
         }
 
         binding.btnCancelShoppingList.setOnClickListener {
             shoppingListViewModel.completeOrCancelShoppingList(
+                userId,
                 shoppingListId,
                 TextConstants.STATUS_CANCELLED
-            )
-            findNavController().popBackStack()
+            ) {
+                findNavController().popBackStack()
+            }
         }
 
         binding.rvEstablishments.layoutManager = LinearLayoutManager(requireContext())
