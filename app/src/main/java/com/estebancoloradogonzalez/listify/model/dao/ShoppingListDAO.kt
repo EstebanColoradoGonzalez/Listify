@@ -4,8 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.estebancoloradogonzalez.listify.model.dto.EstablishmentNameDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductToAnalyzeDTO
+import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListWithEstablishmentDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
+import com.estebancoloradogonzalez.listify.model.dto.ShoppingListTotalDTO
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
 import com.estebancoloradogonzalez.listify.utils.Queries
 import java.time.LocalDateTime
@@ -35,4 +38,16 @@ interface ShoppingListDAO {
 
     @Query(Queries.DELETE_SHOPPING_LIST)
     suspend fun deleteShoppingListById(id: Long)
+
+    @Query(Queries.GET_ESTABLISHMENTS_FOR_SHOPPING_LIST)
+    suspend fun getEstablishmentsForShoppingList(shoppingListId: Long): List<EstablishmentNameDTO>
+
+    @Query(Queries.GET_PRODUCTS_BY_SHOPPING_LIST_AND_ESTABLISHMENT)
+    suspend fun getProductsByShoppingListAndEstablishment(
+        shoppingListId: Long,
+        establishmentName: String
+    ): List<ProductShoppingListWithEstablishmentDTO>
+
+    @Query(Queries.GET_SHOPPING_LIST_DATE_AND_TOTAL_AMOUNT)
+    suspend fun getShoppingListDateAndTotalAmount(shoppingListId: Long): ShoppingListTotalDTO?
 }

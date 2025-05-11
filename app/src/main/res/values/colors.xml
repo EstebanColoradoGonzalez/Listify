@@ -8,4 +8,6 @@
     <color name="dark_green">#3B8686</color>
     <color name="light_gray">#D3D3D3</color>
     <color name="dark_gray">#424242</color>
+    <color name="item_gray">#424242</color>
+    <color name="item_green">#3B8686</color>
 </resources>

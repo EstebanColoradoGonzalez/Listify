@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".view.ShoppingListsFragment">
 
-    <!-- RecyclerView para las listas de compra -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvShoppingLists"
         android:layout_width="0dp"
@@ -20,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Botón flotante en la esquina inferior izquierda para generar una nueva lista de compra -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabGenerateShoppingList"
         android:layout_width="wrap_content"
@@ -30,5 +28,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

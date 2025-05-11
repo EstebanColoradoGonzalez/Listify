@@ -78,6 +78,8 @@ object TextConstants {
     const val PETS = "Mascotas"
     const val OTHERS = "Otros"
 
-    const val TOTAL_EXPENDITURE = "Gasto Total: "
+    const val TOTAL_EXPENDITURE = "Gasto Total: $"
+    const val DATE_FORMAT = "dd/MM/yyyy"
+    const val AMOUNT_FORMAT = "%,.2f"
 
 }
