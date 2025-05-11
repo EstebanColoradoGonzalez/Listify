@@ -17,7 +17,6 @@ import com.estebancoloradogonzalez.listify.view.adapter.ShoppingListAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 
 class ShoppingListsFragment : Fragment() {
     private val args: ShoppingListsFragmentArgs by navArgs()

@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.estebancoloradogonzalez.listify.model.database.AppDatabase
+import com.estebancoloradogonzalez.listify.model.dto.EstablishmentNameDTO
+import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListWithEstablishmentDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
+import com.estebancoloradogonzalez.listify.model.dto.ShoppingListTotalDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingListState
@@ -31,6 +34,51 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
             shoppingListDAO.getShoppingLists(user)
         }
     }
+
+    suspend fun getTotalAmountByShoppingListAndEstablishment(
+        shoppingListId: Long,
+        establishmentName: String
+    ): Double? {
+        return withContext(Dispatchers.IO) {
+            productShoppingListDAO.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName)
+        }
+    }
+
+    suspend fun getEstablishmentFromAShoppingList(shoppingList: Long): List<EstablishmentNameDTO> {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getEstablishmentsForShoppingList(shoppingList)
+        }
+    }
+
+    suspend fun getProductsByShoppingListAndEstablishment(shoppingListId: Long, establishmentName: String): List<ProductShoppingListWithEstablishmentDTO> {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
+        }
+    }
+
+    suspend fun getShoppingListDateAndTotalAmount(shoppingListId: Long): ShoppingListTotalDTO? {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getShoppingListDateAndTotalAmount(shoppingListId)
+        }
+    }
+
+    fun completeOrCancelShoppingList(shoppingListId: Long, stateName: String) {
+        viewModelScope.launch {
+            val state = stateDAO.getStateByName(stateName)
+            val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
+
+            if(state != null && shoppingListState != null) {
+                shoppingListStateDAO.updateStateById(id = shoppingListState.id, state = state.id)
+            }
+        }
+    }
+
+    fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean) {
+        viewModelScope.launch {
+            productShoppingListDAO.updateIsReadyById(productShoppingListId, isReady)
+        }
+    }
+
 
     suspend fun generateShoppingList(date: LocalDateTime, userId: Long, onError: (String) -> Unit, onSuccess: () -> Unit) {
         val products = productDAO.getProductsToAnalyzeDTO(userId)
@@ -106,6 +154,26 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun deleteShoppingList(shoppingListId: Long, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val productShoppingLists = productShoppingListDAO.getByShoppingList(shoppingListId)
+
+            productShoppingLists.forEach { product ->
+                productShoppingListDAO.deleteById(product.id)
+            }
+
+            val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
+
+            if(shoppingListState != null) {
+                shoppingListStateDAO.deleteById(shoppingListState.id)
+            }
+
+            shoppingListDAO.deleteShoppingListById(shoppingListId)
+
+            onSuccess()
+        }
+    }
+
     suspend fun getShoppingListsToAnalyze(user: Long): List<ShoppingListToAnalyzeDTO> {
         return withContext(Dispatchers.IO) {
             val shoppingLists = shoppingListDAO.getShoppingLists(user)
@@ -139,6 +207,6 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(3)
         TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(4)
         TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(6)
-        else -> throw IllegalArgumentException("Frecuencia no soportada: $purchaseFrequency")
+        else -> throw IllegalArgumentException(Messages.NOT_SUPPORTED_FREQUENCY + purchaseFrequency)
     }
 }

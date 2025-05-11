@@ -16,4 +16,5 @@ object Messages {
     const val DATE_IS_NOT_SEVEN_DAYS_AFTER = "Aun no han pasado 7 días desde la ultima lista de compras"
     const val THERE_ARE_NOT_ACTIVE_PRODUCTS = "No hay productos activos registrados."
     const val THERE_IS_AN_ACTIVE_SHOPPING_LIST = "Todavia hay una lista de compras activa."
+    const val NOT_SUPPORTED_FREQUENCY= "Frecuencia no soportada: "
 }

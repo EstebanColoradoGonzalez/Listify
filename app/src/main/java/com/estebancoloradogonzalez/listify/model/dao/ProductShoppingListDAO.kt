@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListDetailDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.utils.Queries
 
@@ -18,9 +19,21 @@ interface ProductShoppingListDAO {
     @Query(Queries.SELECT_PRODUCT_SHOPPING_LIST_BY_SHOPPING_LIST)
     suspend fun getByShoppingList(shoppingList: Long): List<ProductShoppingList>
 
+    @Query(Queries.GET_PRODUCT_SHOPPING_LIST_DETAIL_BY_ID)
+    suspend fun getProductShoppingListDetailById(productShoppingListId: Long): ProductShoppingListDetailDTO?
+
     @Query(Queries.UPDATE_PRODUCT_SHOPPING_LIST)
-    suspend fun updateById(id: Long, unitPrice: Double, purchasedAmount: Double, isReady: Boolean): Int
+    suspend fun updateById(id: Long, unitPrice: Double, purchasedAmount: Double): Int
 
     @Query(Queries.DELETE_PRODUCT_SHOPPING_LIST_BY_ID)
     suspend fun deleteById(id: Long): Int
+
+    @Query(Queries.UPDATE_IS_READY_BY_ID)
+    suspend fun updateIsReadyById(productShoppingListId: Long, isReady: Boolean)
+
+    @Query(Queries.GET_TOTAL_AMOUNT_BY_SHOPPING_LIST_AND_ESTABLISHMENT)
+    suspend fun getTotalAmountByShoppingListAndEstablishment(
+        shoppingListId: Long,
+        establishmentName: String
+    ): Double?
 }

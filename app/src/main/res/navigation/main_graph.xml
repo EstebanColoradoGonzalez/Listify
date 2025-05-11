@@ -131,8 +131,8 @@
         android:name="com.estebancoloradogonzalez.listify.view.EstablishmentFragment"
         android:label="@string/fragment_establishment"
         tools:layout="@layout/fragment_establishment" >
-        <argument android:name="establishmentId"
-            app:argType="long" />
+        <argument android:name="establishmentName"
+            app:argType="string" />
         <action
             android:id="@+id/action_establishmentFragment_to_productFragment"
             app:destination="@id/productFragment" />
@@ -151,6 +151,8 @@
         <argument
             android:name="productShoppingListId"
             app:argType="long" />
+        <argument android:name="productName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/selectProductFragment"
@@ -159,5 +161,8 @@
         tools:layout="@layout/fragment_select_product" >
         <argument android:name="shoppingListId"
             app:argType="long" />
+        <argument
+            android:name="establishmentName"
+            app:argType="string" />
     </fragment>
 </navigation>

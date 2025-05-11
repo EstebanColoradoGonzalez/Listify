@@ -2,6 +2,7 @@ package com.estebancoloradogonzalez.listify.model.dao
 
 import androidx.room.*
 import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
+import com.estebancoloradogonzalez.listify.model.dto.ProductIdNameDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductToUpdateDTO
 import com.estebancoloradogonzalez.listify.model.entity.Product
@@ -23,6 +24,9 @@ interface ProductDAO {
 
     @Query(Queries.SELECT_PRODUCT_TO_UPDATE_DTO)
     suspend fun getProductToUpdate(id: Long): ProductToUpdateDTO?
+
+    @Query(Queries.GET_PRODUCT_ID_NAME_BY_ESTABLISHMENT_NAME)
+    suspend fun getProductsByEstablishmentName(establishmentName: String): List<ProductIdNameDTO>
 
     @Query(Queries.SELECT_PRODUCT_BY_NAME)
     suspend fun getByName(name: String): Product?
