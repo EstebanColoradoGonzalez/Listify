@@ -1,6 +1,7 @@
 package com.estebancoloradogonzalez.listify.model.dao
 
 import androidx.room.*
+import com.estebancoloradogonzalez.listify.model.dto.ActiveProductWithAmountDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductIdNameDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductToAnalyzeDTO
@@ -37,6 +38,9 @@ interface ProductDAO {
     @Query(Queries.UPDATE_PRODUCT_FIELDS)
     suspend fun updateProductById(id: Long, name: String, unitPrice: Double, isActive: Boolean): Int
 
+    @Query(Queries.UPDATE_UNIT_PRICE_BY_PRODUCT_ID)
+    suspend fun updateUnitPrice(productId: Long, newUnitPrice: Double)
+
     @Query(Queries.DELETE_PRODUCT_BY_ID)
     suspend fun deleteById(id: Long): Int
 
@@ -48,4 +52,7 @@ interface ProductDAO {
 
     @Query(Queries.SELECT_USER_EXCEED_BUDGET_TO_UPDATE)
     suspend fun isTotalExpenditureExceedBudgetToUpdate(userId: Long, additionalCost: Double, productId: Long): Boolean
+
+    @Query(Queries.GET_ACTIVE_PRODUCTS_WITH_AMOUNT_BY_USER)
+    suspend fun getActiveProductsWithAmountByUser(userId: Long): List<ActiveProductWithAmountDTO>
 }

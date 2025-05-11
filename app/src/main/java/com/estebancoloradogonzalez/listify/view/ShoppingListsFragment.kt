@@ -62,7 +62,7 @@ class ShoppingListsFragment : Fragment() {
             }
             val adapter = ShoppingListAdapter(shoppingListsFormatted) { shoppingList ->
                 val action = ShoppingListsFragmentDirections
-                    .actionShoppingListsFragmentToShoppingListFragment(shoppingList.id)
+                    .actionShoppingListsFragmentToShoppingListFragment(shoppingList.id, userId)
                 findNavController().navigate(action)
             }
             binding.rvShoppingLists.adapter = adapter

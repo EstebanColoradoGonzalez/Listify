@@ -15,7 +15,7 @@ object Queries {
     const val SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE id = :id"
     const val SELECT_CATEGORY_BY_NAME = "SELECT * FROM category WHERE name = :name"
     const val SELECT_SHOPPING_LISTS = "SELECT s.id as id, s.shopping_list_date as date, st.name as status FROM shopping_list s JOIN shopping_list_state ss ON s.id = ss.shopping_list JOIN state st ON ss.state = st.id WHERE s.user = :user ORDER BY s.shopping_list_date DESC"
-    const val SELECT_LAST_SHOPPING_LIST = "SELECT s.id as id, s.shopping_list_date as date, st.name as status FROM shopping_list s JOIN shopping_list_state ss ON s.id = ss.shopping_list JOIN state st ON ss.state = st.id WHERE s.user = :user ORDER BY shopping_list_date DESC LIMIT 1"
+    const val SELECT_LAST_SHOPPING_LIST = "SELECT s.id as id, s.shopping_list_date as date, st.name as status FROM shopping_list s JOIN shopping_list_state ss ON s.id = ss.shopping_list JOIN state st ON ss.state = st.id WHERE s.user = :user AND st.name != 'Cancelada' ORDER BY shopping_list_date DESC LIMIT 1"
     const val SELECT_SHOPPING_LIST_BY_ID = "SELECT * FROM shopping_list WHERE id = :id"
     const val UPDATE_CATEGORY = "UPDATE category SET name = :newName WHERE id = :id"
     const val UPDATE_SHOPPING_LIST = "UPDATE shopping_list SET shopping_list_date = :newShoppingListDate WHERE id = :id"
@@ -33,6 +33,7 @@ object Queries {
     const val SELECT_PRODUCT_SHOPPING_LIST_BY_ID = "SELECT * FROM product_shopping_list WHERE id = :id"
     const val SELECT_AMOUNT_UNIT_OF_MEASUREMENT_BY_AMOUNT = "SELECT * FROM amount_unit_of_measurement WHERE amount = :amount"
     const val SELECT_SHOPPING_LIST_STATE_BY_SHOPPING_LIST = "SELECT * FROM shopping_list_state WHERE shopping_list = :shoppingList"
+    const val SELECT_SHOPPING_LISTS_TO_ANALYZE = "SELECT s.id as id, s.shopping_list_date as date, st.name as status FROM shopping_list s JOIN shopping_list_state ss ON s.id = ss.shopping_list JOIN state st ON ss.state = st.id WHERE s.user = :user AND st.name != 'Cancelada' ORDER BY s.shopping_list_date DESC"
     const val SELECT_PRODUCT_SHOPPING_LIST_BY_SHOPPING_LIST = "SELECT * FROM product_shopping_list WHERE shopping_list = :shoppingList"
     const val UPDATE_AMOUNT_UNIT_OF_MEASUREMENT_UNIT = "UPDATE amount_unit_of_measurement SET unit_of_measurement = :unitOfMeasurement WHERE id = :id"
     const val UPDATE_SHOPPING_LIST_STATE = "UPDATE shopping_list_state SET state = :state WHERE id = :id"
@@ -77,4 +78,6 @@ object Queries {
     const val GET_PRODUCT_ID_NAME_BY_ESTABLISHMENT_NAME = "SELECT p.id, p.name FROM product AS p INNER JOIN product_establishment AS pe ON p.id = pe.product INNER JOIN establishment AS e ON pe.establishment = e.id WHERE e.name = :establishmentName"
     const val GET_SHOPPING_LIST_DATE_AND_TOTAL_AMOUNT = "SELECT sl.shopping_list_date AS shoppingListDate, SUM(psl.unit_price * psl.purchased_amount) AS totalAmount FROM shopping_list AS sl LEFT JOIN product_shopping_list AS psl ON sl.id = psl.shopping_list WHERE sl.id = :shoppingListId GROUP BY sl.id"
     const val GET_TOTAL_AMOUNT_BY_SHOPPING_LIST_AND_ESTABLISHMENT = "SELECT SUM(psl.unit_price * psl.purchased_amount) FROM product_shopping_list AS psl INNER JOIN product AS p ON psl.product = p.id INNER JOIN product_establishment AS pe ON p.id = pe.product INNER JOIN establishment AS e ON pe.establishment = e.id WHERE psl.shopping_list = :shoppingListId AND e.name = :establishmentName"
+    const val GET_ACTIVE_PRODUCTS_WITH_AMOUNT_BY_USER = "SELECT p.id AS productId, p.name AS productName, p.unit_price AS unitPrice, p.amount AS amountId, a.value AS amountValue FROM product AS p INNER JOIN amount AS a ON p.amount = a.id WHERE p.is_active = 1 AND p.user = :userId"
+    const val UPDATE_UNIT_PRICE_BY_PRODUCT_ID = "UPDATE product SET unit_price = :newUnitPrice WHERE id = :productId"
 }

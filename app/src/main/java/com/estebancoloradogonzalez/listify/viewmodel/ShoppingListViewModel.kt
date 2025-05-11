@@ -27,6 +27,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     private val productShoppingListDAO = AppDatabase.getDatabase(application).productShoppingListDao()
     private val shoppingListStateDAO = AppDatabase.getDatabase(application).shoppingListStateDao()
     private val productDAO = AppDatabase.getDatabase(application).productDao()
+    private val amountDAO = AppDatabase.getDatabase(application).amountDao()
     private val stateDAO = AppDatabase.getDatabase(application).stateDao()
 
     suspend fun getShoppingLists(user: Long): List<ShoppingListDTO> {
@@ -62,7 +63,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun completeOrCancelShoppingList(shoppingListId: Long, stateName: String) {
+    fun completeOrCancelShoppingList(userId: Long, shoppingListId: Long, stateName: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             val state = stateDAO.getStateByName(stateName)
             val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
@@ -70,6 +71,23 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
             if(state != null && shoppingListState != null) {
                 shoppingListStateDAO.updateStateById(id = shoppingListState.id, state = state.id)
             }
+
+            if(stateName == TextConstants.STATUS_COMPLETED) {
+                val products = productDAO.getActiveProductsWithAmountByUser(userId)
+                val productsToAnalyze = shoppingListDAO.getProductsToAnalyzeDTO(shoppingListId)
+
+                products.forEach{ product ->
+                    val productToAnalyze = productsToAnalyze.find { productToAnalyzeDTO -> productToAnalyzeDTO.name == product.productName }
+
+                    if(productToAnalyze != null && (productToAnalyze.unitPrice != product.unitPrice || productToAnalyze.amount != product.amountValue)) {
+
+                        productDAO.updateUnitPrice(product.productId, productToAnalyze.unitPrice)
+                        amountDAO.updateValueById(product.amountId, productToAnalyze.amount)
+                    }
+                }
+            }
+
+            onSuccess()
         }
     }
 
@@ -176,7 +194,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
 
     suspend fun getShoppingListsToAnalyze(user: Long): List<ShoppingListToAnalyzeDTO> {
         return withContext(Dispatchers.IO) {
-            val shoppingLists = shoppingListDAO.getShoppingLists(user)
+            val shoppingLists = shoppingListDAO.getShoppingListstToAnalyze(user)
 
             shoppingLists.map { shoppingListDTO ->
                 val products = shoppingListDAO.getProductsToAnalyzeDTO(shoppingListDTO.id)
