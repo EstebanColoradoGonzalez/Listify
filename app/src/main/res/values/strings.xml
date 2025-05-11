@@ -20,6 +20,8 @@
     <string name="save">Guardar</string>
     <string name="update">Actualizar</string>
     <string name="delete">Eliminar</string>
+    <string name="complete">Completar</string>
+    <string name="cancel">Cancelar</string>
     <string name="product_name">Nombre</string>
     <string name="product_price">Precio</string>
     <string name="product_quantity">Cantidad</string>
@@ -34,4 +36,6 @@
     <string name="enter_date">Ingresar fecha</string>
     <string name="no_products_to_select">Ya todos los productos de este establecimiento fueron seleccionados.</string>
     <string name="select_product">Seleccionar producto</string>
+    <string name="date">Fecha</string>
+    <string name="base_total">Total: $0.00</string>
 </resources>

@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentShoppingListBinding
 import com.estebancoloradogonzalez.listify.view.adapter.EstablishmentAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ShoppingListFragment : Fragment() {
     private var _binding: FragmentShoppingListBinding? = null
@@ -33,8 +36,38 @@ class ShoppingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val shoppingListId = args.shoppingListId
 
-        binding.rvEstablishments.layoutManager = LinearLayoutManager(requireContext())
+        lifecycleScope.launch {
+            val info = shoppingListViewModel.getShoppingListDateAndTotalAmount(shoppingListId)
+            info?.let {
+                val formatter = DateTimeFormatter.ofPattern(TextConstants.DATE_FORMAT, Locale.getDefault())
+                binding.tvShoppingListDate.text = it.shoppingListDate.format(formatter)
+                binding.tvShoppingListTotal.text = TextConstants.TOTAL_EXPENDITURE + String.format(TextConstants.AMOUNT_FORMAT, it.totalAmount)
+            }
+        }
 
+        binding.btnDeleteShoppingList.setOnClickListener {
+            shoppingListViewModel.deleteShoppingList(shoppingListId) {
+                findNavController().popBackStack()
+            }
+        }
+
+        binding.btnCompleteShoppingList.setOnClickListener {
+            shoppingListViewModel.completeOrCancelShoppingList(
+                shoppingListId,
+                TextConstants.STATUS_COMPLETED
+            )
+            findNavController().popBackStack()
+        }
+
+        binding.btnCancelShoppingList.setOnClickListener {
+            shoppingListViewModel.completeOrCancelShoppingList(
+                shoppingListId,
+                TextConstants.STATUS_CANCELLED
+            )
+            findNavController().popBackStack()
+        }
+
+        binding.rvEstablishments.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
             val establishments = shoppingListViewModel.getEstablishmentFromAShoppingList(shoppingListId)
             val adapter = EstablishmentAdapter(establishments) { establishment ->

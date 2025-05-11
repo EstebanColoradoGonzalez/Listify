@@ -8,6 +8,7 @@ import com.estebancoloradogonzalez.listify.model.dto.EstablishmentNameDTO
 import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListWithEstablishmentDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
+import com.estebancoloradogonzalez.listify.model.dto.ShoppingListTotalDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingListState
@@ -43,6 +44,23 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     suspend fun getProductsByShoppingListAndEstablishment(shoppingListId: Long, establishmentName: String): List<ProductShoppingListWithEstablishmentDTO> {
         return withContext(Dispatchers.IO) {
             shoppingListDAO.getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
+        }
+    }
+
+    suspend fun getShoppingListDateAndTotalAmount(shoppingListId: Long): ShoppingListTotalDTO? {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getShoppingListDateAndTotalAmount(shoppingListId)
+        }
+    }
+
+    fun completeOrCancelShoppingList(shoppingListId: Long, stateName: String) {
+        viewModelScope.launch {
+            val state = stateDAO.getStateByName(stateName)
+            val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
+
+            if(state != null && shoppingListState != null) {
+                shoppingListStateDAO.updateStateById(id = shoppingListState.id, state = state.id)
+            }
         }
     }
 
@@ -122,6 +140,26 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
                     }
                 }
             }
+
+            onSuccess()
+        }
+    }
+
+    fun deleteShoppingList(shoppingListId: Long, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            val productShoppingLists = productShoppingListDAO.getByShoppingList(shoppingListId)
+
+            productShoppingLists.forEach { product ->
+                productShoppingListDAO.deleteById(product.id)
+            }
+
+            val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
+
+            if(shoppingListState != null) {
+                shoppingListStateDAO.deleteById(shoppingListState.id)
+            }
+
+            shoppingListDAO.deleteShoppingListById(shoppingListId)
 
             onSuccess()
         }
