@@ -51,7 +51,7 @@ class ProductsFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            val totalExpenditure = productViewModel.getTotalExpenditure() ?: 0.0
+            val totalExpenditure = productViewModel.getTotalExpenditure() ?: NumericConstants.ZERO_POINT_ZERO
             binding.tvTotalExpenditure.text = TextConstants.TOTAL_EXPENDITURE + totalExpenditure
         }
     }

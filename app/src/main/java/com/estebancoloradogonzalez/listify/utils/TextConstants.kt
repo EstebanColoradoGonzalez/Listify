@@ -37,6 +37,9 @@ object TextConstants {
     const val STATUS_COMPLETED = "Completada"
     const val STATUS_CANCELLED = "Cancelada"
 
+    const val PRODUCT_STATUS_ACTIVE = "Activa"
+    const val PRODUCT_STATUS_DESACTIVE = "Desactivado"
+
     const val UNIT_KILOGRAM = "Kilogramo"
     const val UNIT_KILOGRAM_SHORT = "kg"
     const val UNIT_POUND = "Libra"
@@ -81,5 +84,4 @@ object TextConstants {
     const val TOTAL_EXPENDITURE = "Gasto Total: $"
     const val DATE_FORMAT = "dd/MM/yyyy"
     const val AMOUNT_FORMAT = "%,.2f"
-
 }
