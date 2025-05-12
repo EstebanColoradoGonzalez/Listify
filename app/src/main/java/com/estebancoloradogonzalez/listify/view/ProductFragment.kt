@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentProductBinding
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.viewmodel.ProductShoppingListViewModel
 import kotlinx.coroutines.launch
 
@@ -20,8 +21,8 @@ class ProductFragment : Fragment() {
     private val args: ProductFragmentArgs by navArgs()
     private val productShoppingListViewModel: ProductShoppingListViewModel by viewModels()
 
-    private var initialPrice: String = ""
-    private var initialQuantity: String = ""
+    private var initialPrice: String = TextConstants.EMPTY
+    private var initialQuantity: String = TextConstants.EMPTY
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
