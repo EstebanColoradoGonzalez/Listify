@@ -150,6 +150,5 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.88"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

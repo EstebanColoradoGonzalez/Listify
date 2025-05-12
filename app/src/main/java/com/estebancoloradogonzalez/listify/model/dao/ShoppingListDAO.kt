@@ -46,10 +46,7 @@ interface ShoppingListDAO {
     suspend fun getEstablishmentsForShoppingList(shoppingListId: Long): List<EstablishmentNameDTO>
 
     @Query(Queries.GET_PRODUCTS_BY_SHOPPING_LIST_AND_ESTABLISHMENT)
-    suspend fun getProductsByShoppingListAndEstablishment(
-        shoppingListId: Long,
-        establishmentName: String
-    ): List<ProductShoppingListWithEstablishmentDTO>
+    suspend fun getProductsByShoppingListAndEstablishment(shoppingListId: Long, establishmentName: String): List<ProductShoppingListWithEstablishmentDTO>
 
     @Query(Queries.GET_SHOPPING_LIST_DATE_AND_TOTAL_AMOUNT)
     suspend fun getShoppingListDateAndTotalAmount(shoppingListId: Long): ShoppingListTotalDTO?

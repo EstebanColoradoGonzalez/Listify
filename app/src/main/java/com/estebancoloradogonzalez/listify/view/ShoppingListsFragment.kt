@@ -36,7 +36,7 @@ class ShoppingListsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (args.userId == -1L) {
+        if (args.userId == NumericConstants.LONG_NEGATIVE_ONE) {
             lifecycleScope.launch {
                 userId = userViewModel.getUserId()
                 setupRecyclerView(userId)

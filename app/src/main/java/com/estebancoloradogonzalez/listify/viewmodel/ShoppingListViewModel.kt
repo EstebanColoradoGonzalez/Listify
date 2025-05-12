@@ -218,13 +218,13 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun getDateThreshold(date: LocalDateTime, purchaseFrequency: String): LocalDateTime = when (purchaseFrequency) {
-        TextConstants.FREQUENCY_WEEKLY -> date.minusWeeks(1)
-        TextConstants.FREQUENCY_FORTNIGHTLY -> date.minusWeeks(2)
-        TextConstants.FREQUENCY_MONTHLY -> date.minusMonths(1)
-        TextConstants.FREQUENCY_BIMONTHLY -> date.minusMonths(2)
-        TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(3)
-        TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(4)
-        TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(6)
+        TextConstants.FREQUENCY_WEEKLY -> date.minusWeeks(NumericConstants.LONG_ONE)
+        TextConstants.FREQUENCY_FORTNIGHTLY -> date.minusWeeks(NumericConstants.LONG_TWO)
+        TextConstants.FREQUENCY_MONTHLY -> date.minusMonths(NumericConstants.LONG_ONE)
+        TextConstants.FREQUENCY_BIMONTHLY -> date.minusMonths(NumericConstants.LONG_TWO)
+        TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(NumericConstants.LONG_THREE)
+        TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(NumericConstants.LONG_FOUR)
+        TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(NumericConstants.LONG_SIX)
         else -> throw IllegalArgumentException(Messages.NOT_SUPPORTED_FREQUENCY + purchaseFrequency)
     }
 }
