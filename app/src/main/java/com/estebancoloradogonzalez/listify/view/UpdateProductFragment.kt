@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentUpdateProductBinding
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.viewmodel.EstablishmentViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.CategoryViewModel
@@ -36,7 +37,7 @@ class UpdateProductFragment : Fragment() {
     private var establishments: List<String> = emptyList()
     private var purchaseFrequencies: List<String> = emptyList()
     private var unitsOfMeasurement: List<String> = emptyList()
-    private val statusOptions = listOf("Activo", "Desactivado")
+    private val statusOptions = listOf(TextConstants.PRODUCT_STATUS_ACTIVE, TextConstants.PRODUCT_STATUS_DESACTIVE)
 
     private var productToUpdateDTO: com.estebancoloradogonzalez.listify.model.dto.ProductToUpdateDTO? = null
 
@@ -66,7 +67,7 @@ class UpdateProductFragment : Fragment() {
             val selectedPurchaseFrequency = binding.spinnerPurchaseFrequency.selectedItem.toString()
             val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
             val selectedCategory = binding.spinnerCategory.selectedItem.toString()
-            val isActive = binding.spinnerIsActive.selectedItem.toString() == "Activo"
+            val isActive = binding.spinnerIsActive.selectedItem.toString() == TextConstants.PRODUCT_STATUS_ACTIVE
 
             lifecycleScope.launch {
                 val product = productViewModel.getProductById(productId)
@@ -141,7 +142,7 @@ class UpdateProductFragment : Fragment() {
             val categoryPos = categories.indexOf(product.category)
             if (categoryPos >= 0) binding.spinnerCategory.setSelection(categoryPos)
 
-            val selectedStatus = if (product.isActive) "Activo" else "Desactivado"
+            val selectedStatus = if (product.isActive) TextConstants.PRODUCT_STATUS_ACTIVE else TextConstants.PRODUCT_STATUS_DESACTIVE
             val statusPos = statusOptions.indexOf(selectedStatus)
             binding.spinnerIsActive.setSelection(statusPos)
         }

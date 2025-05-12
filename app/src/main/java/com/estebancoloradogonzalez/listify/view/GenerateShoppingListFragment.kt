@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.estebancoloradogonzalez.listify.databinding.FragmentGenerateShoppingListBinding
 import com.estebancoloradogonzalez.listify.utils.Messages
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -76,7 +77,7 @@ class GenerateShoppingListFragment : Fragment() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val datePicker = DatePickerDialog(requireContext(), { _, selYear, selMonth, selDay ->
             selectedDate = LocalDateTime.of(selYear, selMonth + 1, selDay, LocalTime.now().hour, LocalTime.now().minute)
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern(TextConstants.DATE_FORMAT)
             binding.etDate.setText(selectedDate?.format(formatter))
         }, year, month, day)
         datePicker.show()

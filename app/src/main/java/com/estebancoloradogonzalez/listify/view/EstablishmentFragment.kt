@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentEstablishmentBinding
+import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.view.adapter.ProductEstablishmentAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
@@ -79,7 +80,7 @@ class EstablishmentFragment : Fragment() {
     }
 
     private suspend fun reloadTotal(shoppingListId: Long, establishmentName: String) {
-        val total = shoppingListViewModel.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName) ?: 0.0
+        val total = shoppingListViewModel.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName) ?: NumericConstants.ZERO_POINT_ZERO
         binding.tvTotalAmount.text = TextConstants.TOTAL_EXPENDITURE + String.format(TextConstants.AMOUNT_FORMAT, total)
     }
 

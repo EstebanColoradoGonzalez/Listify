@@ -23,7 +23,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Precio y unidad en una fila -->
         <EditText
             android:id="@+id/etProductPrice"
             android:layout_width="0dp"
@@ -54,7 +53,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.28"/>
 
-        <!-- Cantidad -->
         <EditText
             android:id="@+id/etProductQuantity"
             android:layout_width="0dp"
@@ -69,7 +67,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.88"/>
 
-        <!-- Error -->
         <TextView
             android:id="@+id/tvError"
             android:layout_width="0dp"
@@ -82,7 +79,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.8"/>
 
-        <!-- Botón actualizar -->
         <Button
             android:id="@+id/btnUpdateProduct"
             android:layout_width="0dp"
