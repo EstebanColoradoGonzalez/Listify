@@ -29,4 +29,7 @@ interface CategoryDAO {
 
     @Query(Queries.DELETE_CATEGORY)
     suspend fun deleteCategoryById(id: Long)
+
+    @Query(Queries.DELETE_CATEGORIES)
+    suspend fun deleteAll()
 }
