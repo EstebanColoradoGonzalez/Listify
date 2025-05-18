@@ -39,12 +39,10 @@ class ShoppingListGenerator(private val db: AppDatabase) {
         val shoppingList = ShoppingList(shoppingListDate = date, user = userId)
         val shoppingListId = shoppingListDAO.insert(shoppingList)
 
-        val state : State?
-
-        if(position == NumericConstants.LONG_ONE) {
-            state = stateDAO.getStateByName(TextConstants.STATUS_COMPLETED)
+        val state : State? = if (position == NumericConstants.LONG_ONE) {
+            stateDAO.getStateByName(TextConstants.STATUS_COMPLETED)
         } else {
-            state = stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
+            stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
         }
 
         if(state != null) {
