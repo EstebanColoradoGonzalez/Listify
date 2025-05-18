@@ -6,6 +6,7 @@ import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.entity.ProductShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingList
 import com.estebancoloradogonzalez.listify.model.entity.ShoppingListState
+import com.estebancoloradogonzalez.listify.model.entity.State
 import com.estebancoloradogonzalez.listify.utils.Messages
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
@@ -38,7 +39,13 @@ class ShoppingListGenerator(private val db: AppDatabase) {
         val shoppingList = ShoppingList(shoppingListDate = date, user = userId)
         val shoppingListId = shoppingListDAO.insert(shoppingList)
 
-        val state = stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
+        val state : State?
+
+        if(position == NumericConstants.LONG_ONE) {
+            state = stateDAO.getStateByName(TextConstants.STATUS_COMPLETED)
+        } else {
+            state = stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
+        }
 
         if(state != null) {
             val shoppingListState = ShoppingListState(shoppingList = shoppingListId, state = state.id)
@@ -49,7 +56,7 @@ class ShoppingListGenerator(private val db: AppDatabase) {
         if(allShoppingList.isEmpty()) {
             products.forEach{ product ->
                 if(position == NumericConstants.LONG_ONE && productsNotIncludedInTheFirstPosition(product.name)) {
-                    val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = false, shoppingList = shoppingListId, product = product.id)
+                    val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = true, shoppingList = shoppingListId, product = product.id)
 
                     productShoppingListDAO.insert(productShoppingList)
                 }
