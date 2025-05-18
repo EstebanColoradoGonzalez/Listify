@@ -23,6 +23,7 @@ import com.estebancoloradogonzalez.listify.model.dao.StateDAO
 import com.estebancoloradogonzalez.listify.model.dao.UnitOfMeasurementDAO
 import com.estebancoloradogonzalez.listify.model.dao.UserDAO
 import com.estebancoloradogonzalez.listify.model.database.utils.ProductsSeed
+import com.estebancoloradogonzalez.listify.model.database.utils.UserData
 import com.estebancoloradogonzalez.listify.model.entity.Amount
 import com.estebancoloradogonzalez.listify.model.entity.AmountUnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.Budget
@@ -177,7 +178,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         suspend fun registerProducts(db: AppDatabase) {
-            val userId = registerUser("Esteban Colorado González", "870000", db)
+            val userId = registerUser(UserData.USER_NAME, UserData.USER_BUDGET, db)
 
             ProductsSeed.products.forEach { product ->
                 registerProduct(
