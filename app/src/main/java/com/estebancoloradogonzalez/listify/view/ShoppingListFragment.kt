@@ -46,29 +46,35 @@ class ShoppingListFragment : Fragment() {
             }
         }
 
-        binding.btnDeleteShoppingList.setOnClickListener {
-            shoppingListViewModel.deleteShoppingList(shoppingListId) {
-                findNavController().popBackStack()
-            }
-        }
-
         binding.btnCompleteShoppingList.setOnClickListener {
-            shoppingListViewModel.completeOrCancelShoppingList(
-                userId,
-                shoppingListId,
-                TextConstants.STATUS_COMPLETED
-            ) {
-                findNavController().popBackStack()
+            lifecycleScope.launch {
+                shoppingListViewModel.completeOrCancelShoppingList(
+                    userId,
+                    shoppingListId,
+                    TextConstants.STATUS_COMPLETED,
+                    { errorMessage ->
+                        binding.tvErrorMessage.text = errorMessage
+                        binding.tvErrorMessage.visibility = View.VISIBLE
+                    }) {
+                    binding.tvErrorMessage.visibility = View.GONE
+                    findNavController().popBackStack()
+                }
             }
         }
 
         binding.btnCancelShoppingList.setOnClickListener {
-            shoppingListViewModel.completeOrCancelShoppingList(
-                userId,
-                shoppingListId,
-                TextConstants.STATUS_CANCELLED
-            ) {
-                findNavController().popBackStack()
+            lifecycleScope.launch {
+                shoppingListViewModel.completeOrCancelShoppingList(
+                    userId,
+                    shoppingListId,
+                    TextConstants.STATUS_CANCELLED,
+                    { errorMessage ->
+                        binding.tvErrorMessage.text = errorMessage
+                        binding.tvErrorMessage.visibility = View.VISIBLE
+                    }) {
+                    binding.tvErrorMessage.visibility = View.GONE
+                    findNavController().popBackStack()
+                }
             }
         }
 

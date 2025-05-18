@@ -63,7 +63,18 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun completeOrCancelShoppingList(userId: Long, shoppingListId: Long, stateName: String, onSuccess: () -> Unit) {
+    suspend fun completeOrCancelShoppingList(userId: Long, shoppingListId: Long, stateName: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
+        if(stateName == TextConstants.STATUS_COMPLETED) {
+            val products = productShoppingListDAO.getByShoppingList(shoppingListId)
+
+            products.forEach{ product ->
+                if(!product.isReady) {
+                    onError(Messages.THERE_ARE_PRODUCTS_HAVE_NOT_BEEN_COMPLETED)
+                    return
+                }
+            }
+        }
+
         viewModelScope.launch {
             val state = stateDAO.getStateByName(stateName)
             val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
@@ -172,29 +183,9 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun deleteShoppingList(shoppingListId: Long, onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            val productShoppingLists = productShoppingListDAO.getByShoppingList(shoppingListId)
-
-            productShoppingLists.forEach { product ->
-                productShoppingListDAO.deleteById(product.id)
-            }
-
-            val shoppingListState = shoppingListStateDAO.getByShoppingList(shoppingListId)
-
-            if(shoppingListState != null) {
-                shoppingListStateDAO.deleteById(shoppingListState.id)
-            }
-
-            shoppingListDAO.deleteShoppingListById(shoppingListId)
-
-            onSuccess()
-        }
-    }
-
     suspend fun getShoppingListsToAnalyze(user: Long): List<ShoppingListToAnalyzeDTO> {
         return withContext(Dispatchers.IO) {
-            val shoppingLists = shoppingListDAO.getShoppingListstToAnalyze(user)
+            val shoppingLists = shoppingListDAO.getShoppingListsToAnalyze(user)
 
             shoppingLists.map { shoppingListDTO ->
                 val products = shoppingListDAO.getProductsToAnalyzeDTO(shoppingListDTO.id)

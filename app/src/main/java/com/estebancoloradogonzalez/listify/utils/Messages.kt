@@ -17,4 +17,5 @@ object Messages {
     const val THERE_ARE_NOT_ACTIVE_PRODUCTS = "No hay productos activos registrados."
     const val THERE_IS_AN_ACTIVE_SHOPPING_LIST = "Todavia hay una lista de compras activa."
     const val NOT_SUPPORTED_FREQUENCY= "Frecuencia no soportada: "
+    const val THERE_ARE_PRODUCTS_HAVE_NOT_BEEN_COMPLETED= "Hay productos dentro de la lista que no han sido completados o eliminados."
 }
