@@ -20,6 +20,7 @@ object Queries {
     const val UPDATE_CATEGORY = "UPDATE category SET name = :newName WHERE id = :id"
     const val UPDATE_SHOPPING_LIST = "UPDATE shopping_list SET shopping_list_date = :newShoppingListDate WHERE id = :id"
     const val DELETE_CATEGORY = "DELETE FROM category WHERE id = :id"
+    const val DELETE_CATEGORIES = "DELETE FROM category"
     const val DELETE_SHOPPING_LIST = "DELETE FROM shopping_list WHERE id = :id"
     const val DELETE_ESTABLISHMENTS = "DELETE FROM establishment"
     const val DELETE_PURCHASE_FREQUENCIES = "DELETE FROM purchase_frequency"

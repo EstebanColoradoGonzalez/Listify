@@ -22,6 +22,7 @@ import com.estebancoloradogonzalez.listify.model.dao.ShoppingListStateDAO
 import com.estebancoloradogonzalez.listify.model.dao.StateDAO
 import com.estebancoloradogonzalez.listify.model.dao.UnitOfMeasurementDAO
 import com.estebancoloradogonzalez.listify.model.dao.UserDAO
+import com.estebancoloradogonzalez.listify.model.database.prepopulate.PrepopulateFacade
 import com.estebancoloradogonzalez.listify.model.entity.Amount
 import com.estebancoloradogonzalez.listify.model.entity.AmountUnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.Budget
@@ -107,70 +108,8 @@ abstract class AppDatabase : RoomDatabase() {
             super.onCreate(db)
             CoroutineScope(Dispatchers.IO).launch {
                 val database = getDatabase(context)
-                prepopulateDatabase(database)
+                PrepopulateFacade(database).prepopulateDatabase()
             }
-        }
-
-        suspend fun prepopulateDatabase(db: AppDatabase) {
-            val stateDao = db.stateDao()
-            val unitDao = db.unitOfMeasurementDao()
-            val establishmentDao = db.establishmentDao()
-            val frequencyDao = db.purchaseFrequencyDao()
-            val categoryDao = db.categoryDao()
-
-            stateDao.deleteAll()
-            unitDao.deleteAll()
-            establishmentDao.deleteAll()
-            frequencyDao.deleteAll()
-
-            stateDao.insertAll(
-                State(name = TextConstants.STATUS_ACTIVE),
-                State(name = TextConstants.STATUS_COMPLETED),
-                State(name = TextConstants.STATUS_CANCELLED)
-            )
-
-            unitDao.insertAll(
-                UnitOfMeasurement(name = TextConstants.UNIT_KILOGRAM, symbol = TextConstants.UNIT_KILOGRAM_SHORT),
-                UnitOfMeasurement(name = TextConstants.UNIT_POUND, symbol = TextConstants.UNIT_POUND_SHORT),
-                UnitOfMeasurement(name = TextConstants.UNIT_LITER, symbol = TextConstants.UNIT_LITER_SHORT),
-                UnitOfMeasurement(name = TextConstants.UNIT_COUNT, symbol = TextConstants.UNIT_COUNT_SHORT)
-            )
-
-            establishmentDao.insertAll(
-                Establishment(name = TextConstants.STORE_D1),
-                Establishment(name = TextConstants.STORE_DOLLAR_CITY),
-                Establishment(name = TextConstants.STORE_BUTCHER),
-                Establishment(name = TextConstants.STORE_GREENGROCER),
-                Establishment(name = TextConstants.STORE_OTHER)
-            )
-
-            frequencyDao.insertAll(
-                PurchaseFrequency(name = TextConstants.FREQUENCY_WEEKLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_FORTNIGHTLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_MONTHLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_BIMONTHLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_QUARTERLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_FOUR_MONTHLY),
-                PurchaseFrequency(name = TextConstants.FREQUENCY_SEMIANNUAL)
-            )
-
-            categoryDao.insertAll(
-                Category(name = TextConstants.FRUITS),
-                Category(name = TextConstants.VEGETABLES),
-                Category(name = TextConstants.SPICES_AND_CONDIMENTS),
-                Category(name = TextConstants.BEVERAGES),
-                Category(name = TextConstants.GRAINS_AND_CEREALS),
-                Category(name = TextConstants.MEATS_AND_PROTEINS),
-                Category(name = TextConstants.DAIRY_AND_DERIVATIVES),
-                Category(name = TextConstants.BAKERY),
-                Category(name = TextConstants.SAUCES_AND_DRESSINGS),
-                Category(name = TextConstants.SWEETENERS),
-                Category(name = TextConstants.OILS_AND_FATS),
-                Category(name = TextConstants.SNACKS),
-                Category(name = TextConstants.CLEANING_AND_HOME),
-                Category(name = TextConstants.PETS),
-                Category(name = TextConstants.OTHERS),
-            )
         }
     }
 }
