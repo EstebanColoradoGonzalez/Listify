@@ -22,7 +22,7 @@ interface ShoppingListDAO {
     suspend fun getShoppingLists(user: Long): List<ShoppingListDTO>
 
     @Query(Queries.SELECT_SHOPPING_LISTS_TO_ANALYZE)
-    suspend fun getShoppingListstToAnalyze(user: Long): List<ShoppingListDTO>
+    suspend fun getShoppingListsToAnalyze(user: Long): List<ShoppingListDTO>
 
     @Query(Queries.SELECT_PRODUCTS_TO_ANALYZE)
     suspend fun getProductsToAnalyzeDTO(shoppingList: Long): List<ProductToAnalyzeDTO>
