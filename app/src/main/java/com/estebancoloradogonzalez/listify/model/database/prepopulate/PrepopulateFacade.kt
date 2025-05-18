@@ -10,7 +10,7 @@ import com.estebancoloradogonzalez.listify.model.database.service.StateService
 import com.estebancoloradogonzalez.listify.model.database.service.UnitService
 import com.estebancoloradogonzalez.listify.model.database.service.UserRegistrationService
 
-class PrepopulateFacade(private val db: AppDatabase) {
+class PrepopulateFacade(db: AppDatabase) {
     private val stateService = StateService(db)
     private val unitService = UnitService(db)
     private val establishmentService = EstablishmentService(db)
