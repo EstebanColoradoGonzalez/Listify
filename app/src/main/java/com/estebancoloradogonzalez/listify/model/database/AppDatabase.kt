@@ -22,6 +22,7 @@ import com.estebancoloradogonzalez.listify.model.dao.ShoppingListStateDAO
 import com.estebancoloradogonzalez.listify.model.dao.StateDAO
 import com.estebancoloradogonzalez.listify.model.dao.UnitOfMeasurementDAO
 import com.estebancoloradogonzalez.listify.model.dao.UserDAO
+import com.estebancoloradogonzalez.listify.model.database.utils.ProductData
 import com.estebancoloradogonzalez.listify.model.database.utils.ProductsSeed
 import com.estebancoloradogonzalez.listify.model.database.utils.UserData
 import com.estebancoloradogonzalez.listify.model.entity.Amount
@@ -241,7 +242,7 @@ abstract class AppDatabase : RoomDatabase() {
                 amountUnitOfMeasurementDAO.insert(amountUnitOfMeasurement)
             }
 
-            val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = true, amount = amountId, user = userId, registrationDate = LocalDateTime.now())
+            val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = isNotActiveProduct(productName), amount = amountId, user = userId, registrationDate = LocalDateTime.now())
             val productId = productDAO.insert(product)
 
             val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
@@ -264,6 +265,13 @@ abstract class AppDatabase : RoomDatabase() {
                 val productCategory = ProductCategory(product = productId, category = category.id)
                 productCategoryDAO.insert(productCategory)
             }
+        }
+
+        fun isNotActiveProduct(productName: String) : Boolean {
+            return productName != ProductData.Nescafe.NAME &&
+                    productName != ProductData.Ramen.NAME &&
+                    productName != ProductData.SolomitoDeCerdo.NAME &&
+                    productName != ProductData.PapasCriollas.NAME
         }
     }
 }
