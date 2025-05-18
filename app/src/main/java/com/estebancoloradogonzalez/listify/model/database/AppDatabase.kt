@@ -1,7 +1,6 @@
 package com.estebancoloradogonzalez.listify.model.database
 
 import android.content.Context
-import androidx.lifecycle.viewModelScope
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -52,8 +51,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 @Database(
     entities = [
@@ -181,7 +178,7 @@ abstract class AppDatabase : RoomDatabase() {
                 Category(name = TextConstants.PETS),
                 Category(name = TextConstants.OTHERS),
             )
-            
+
             registerProducts(db)
         }
 
