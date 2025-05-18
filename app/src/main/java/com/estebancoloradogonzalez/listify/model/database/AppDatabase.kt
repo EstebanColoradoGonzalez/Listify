@@ -179,10 +179,10 @@ abstract class AppDatabase : RoomDatabase() {
                 Category(name = TextConstants.OTHERS),
             )
 
-            registerProducts(db)
+            registerTestData(db)
         }
 
-        suspend fun registerProducts(db: AppDatabase) {
+        suspend fun registerTestData(db: AppDatabase) {
             val userId = registerUser(UserData.USER_NAME, UserData.USER_BUDGET, db)
 
             ProductsSeed.products.forEach { product ->
