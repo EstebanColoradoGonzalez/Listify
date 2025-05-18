@@ -181,6 +181,7 @@ abstract class AppDatabase : RoomDatabase() {
                 Category(name = TextConstants.PETS),
                 Category(name = TextConstants.OTHERS),
             )
+            
             registerProducts(db)
         }
 
