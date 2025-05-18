@@ -1,6 +1,7 @@
 package com.estebancoloradogonzalez.listify.model.database
 
 import android.content.Context
+import androidx.lifecycle.viewModelScope
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -25,6 +26,7 @@ import com.estebancoloradogonzalez.listify.model.dao.UserDAO
 import com.estebancoloradogonzalez.listify.model.database.utils.ProductData
 import com.estebancoloradogonzalez.listify.model.database.utils.ProductsSeed
 import com.estebancoloradogonzalez.listify.model.database.utils.UserData
+import com.estebancoloradogonzalez.listify.model.dto.ShoppingListToAnalyzeDTO
 import com.estebancoloradogonzalez.listify.model.entity.Amount
 import com.estebancoloradogonzalez.listify.model.entity.AmountUnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.Budget
@@ -42,12 +44,16 @@ import com.estebancoloradogonzalez.listify.model.entity.State
 import com.estebancoloradogonzalez.listify.model.entity.UnitOfMeasurement
 import com.estebancoloradogonzalez.listify.model.entity.User
 import com.estebancoloradogonzalez.listify.utils.DateConverter
+import com.estebancoloradogonzalez.listify.utils.Messages
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 @Database(
     entities = [
@@ -194,6 +200,8 @@ abstract class AppDatabase : RoomDatabase() {
                     db
                 )
             }
+
+            generateShoppingLists(userId, db)
         }
 
 
@@ -272,6 +280,139 @@ abstract class AppDatabase : RoomDatabase() {
                     productName != ProductData.Ramen.NAME &&
                     productName != ProductData.SolomitoDeCerdo.NAME &&
                     productName != ProductData.PapasCriollas.NAME
+        }
+
+        suspend fun generateShoppingLists(userId: Long,
+                                          db: AppDatabase) {
+            generateShoppingList(
+                date = LocalDateTime.of(2025, 5, 3, 0, 0),
+                userId = userId,
+                db,
+                NumericConstants.LONG_ONE
+            )
+        }
+
+        suspend fun generateShoppingList(date: LocalDateTime,
+                                         userId: Long,
+                                         db: AppDatabase,
+                                         position: Long) {
+            val productDAO = db.productDao()
+            val shoppingListDAO = db.shoppingListDao()
+            val stateDAO = db.stateDao()
+            val shoppingListStateDAO = db.shoppingListStateDao()
+            val productShoppingListDAO = db.productShoppingListDao()
+
+            val products = productDAO.getProductsToAnalyzeDTO(userId)
+            val lastShoppingList = shoppingListDAO.getLastShoppingList(userId)
+            val allShoppingList = getShoppingListsToAnalyze(userId, db)
+
+            val shoppingList = ShoppingList(shoppingListDate = date, user = userId)
+            val shoppingListId = shoppingListDAO.insert(shoppingList)
+
+            val state = stateDAO.getStateByName(TextConstants.STATUS_ACTIVE)
+
+            if(state != null) {
+                val shoppingListState = ShoppingListState(shoppingList = shoppingListId, state = state.id)
+
+                shoppingListStateDAO.insert(shoppingListState)
+            }
+
+            if(allShoppingList.isEmpty()) {
+                products.forEach{ product ->
+                    if(position == NumericConstants.LONG_ONE && productsNotIncludedInTheFirstPosition(product.name)) {
+                        val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = false, shoppingList = shoppingListId, product = product.id)
+
+                        productShoppingListDAO.insert(productShoppingList)
+                    }
+                }
+            } else {
+                products.forEach{ product ->
+                    val aShoppingList = findShoppingListByFrequency(allShoppingList, date, product.purchaseFrequency)
+
+                    if(aShoppingList != null) {
+                        val aProduct = aShoppingList.products.firstOrNull {it.name == product.name}
+
+                        if(aProduct != null) {
+                            val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = false, shoppingList = shoppingListId, product = product.id)
+
+                            productShoppingListDAO.insert(productShoppingList)
+                        }
+                    } else {
+                        if(lastShoppingList != null && lastShoppingList.date.isBefore(date)){
+                            val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = false, shoppingList = shoppingListId, product = product.id)
+
+                            productShoppingListDAO.insert(productShoppingList)
+                        }
+                    }
+                }
+            }
+        }
+
+        fun productsNotIncludedInTheFirstPosition(productName: String) : Boolean {
+            return productName != ProductData.SalsaBBQ.NAME &&
+                    productName != ProductData.Ducales.NAME &&
+                    productName != ProductData.SnackCremoso.NAME &&
+                    productName != ProductData.LimpiadorBicarbonato.NAME &&
+                    productName != ProductData.PanoLimpon.NAME &&
+                    productName != ProductData.Alcohol.NAME &&
+                    productName != ProductData.PastillasParaBano.NAME &&
+                    productName != ProductData.Listerine.NAME &&
+                    productName != ProductData.JabonLiquidoDeManos.NAME &&
+                    productName != ProductData.EsponjaParaBrillarOllas.NAME &&
+                    productName != ProductData.EsponjaParaTrastes.NAME &&
+                    productName != ProductData.AmbientadorDeArenaDeGatos.NAME &&
+                    productName != ProductData.Aluminio.NAME &&
+                    productName != ProductData.Brillantismo.NAME &&
+                    productName != ProductData.Alitas.NAME &&
+                    productName != ProductData.Lagarto.NAME &&
+                    productName != ProductData.Mango.NAME &&
+                    productName != ProductData.Pimenton.NAME &&
+                    productName != ProductData.Repollo.NAME &&
+                    productName != ProductData.Arverja.NAME &&
+                    productName != ProductData.Pimienta.NAME &&
+                    productName != ProductData.CremaDepilacion.NAME &&
+                    productName != ProductData.Shampoo.NAME &&
+                    productName != ProductData.BolsasTransparentes.NAME &&
+                    productName != ProductData.Mayonesa.NAME &&
+                    productName != ProductData.ArenaParaLaGata.NAME
+        }
+
+        suspend fun getShoppingListsToAnalyze(user: Long, db: AppDatabase): List<ShoppingListToAnalyzeDTO> {
+            val shoppingListDAO = db.shoppingListDao()
+
+            return withContext(Dispatchers.IO) {
+                val shoppingLists = shoppingListDAO.getShoppingListsToAnalyze(user)
+
+                shoppingLists.map { shoppingListDTO ->
+                    val products = shoppingListDAO.getProductsToAnalyzeDTO(shoppingListDTO.id)
+                    ShoppingListToAnalyzeDTO(
+                        id = shoppingListDTO.id,
+                        date = shoppingListDTO.date,
+                        status = shoppingListDTO.status,
+                        products = products
+                    )
+                }
+            }
+        }
+
+        fun findShoppingListByFrequency(
+            allShoppingList: List<ShoppingListToAnalyzeDTO>,
+            date: LocalDateTime,
+            purchaseFrequency: String
+        ): ShoppingListToAnalyzeDTO? {
+            val thresholdDate = getDateThreshold(date, purchaseFrequency)
+            return allShoppingList.firstOrNull { it.date.isBefore(thresholdDate) }
+        }
+
+        fun getDateThreshold(date: LocalDateTime, purchaseFrequency: String): LocalDateTime = when (purchaseFrequency) {
+            TextConstants.FREQUENCY_WEEKLY -> date.minusWeeks(NumericConstants.LONG_ONE)
+            TextConstants.FREQUENCY_FORTNIGHTLY -> date.minusWeeks(NumericConstants.LONG_TWO)
+            TextConstants.FREQUENCY_MONTHLY -> date.minusMonths(NumericConstants.LONG_ONE)
+            TextConstants.FREQUENCY_BIMONTHLY -> date.minusMonths(NumericConstants.LONG_TWO)
+            TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(NumericConstants.LONG_THREE)
+            TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(NumericConstants.LONG_FOUR)
+            TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(NumericConstants.LONG_SIX)
+            else -> throw IllegalArgumentException(Messages.NOT_SUPPORTED_FREQUENCY + purchaseFrequency)
         }
     }
 }
