@@ -54,7 +54,7 @@ class ProductRegistrationService(private val db: AppDatabase) {
             amountUnitOfMeasurementDAO.insert(amountUnitOfMeasurement)
         }
 
-        val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = isNotActiveProduct(productName), amount = amountId, user = userId, registrationDate = LocalDateTime.now())
+        val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = isNotActiveProduct(productName), amount = amountId, user = userId, registrationDate = LocalDateTime.of(2025,4,1,0,0))
         val productId = productDAO.insert(product)
 
         val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
