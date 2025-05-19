@@ -38,6 +38,12 @@ class ShoppingListFragment : Fragment() {
         val userId = args.userId
 
         lifecycleScope.launch {
+            val shoppingListDTO = shoppingListViewModel.getShoppingListById(shoppingListId)
+            val isActive = shoppingListDTO?.status == TextConstants.STATUS_ACTIVE
+
+            binding.btnCompleteShoppingList.isEnabled = isActive
+            binding.btnCancelShoppingList.isEnabled = isActive
+
             val info = shoppingListViewModel.getShoppingListDateAndTotalAmount(shoppingListId)
             info?.let {
                 val formatter = DateTimeFormatter.ofPattern(TextConstants.DATE_FORMAT, Locale.getDefault())
