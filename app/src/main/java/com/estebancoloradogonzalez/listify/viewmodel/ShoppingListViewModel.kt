@@ -176,7 +176,7 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
                             productShoppingListDAO.insert(productShoppingList)
                         }
                     } else {
-                        if(lastShoppingList != null && lastShoppingList.date.isBefore(date)){
+                        if(lastShoppingList != null && product.registrationDate.isAfter(lastShoppingList.date)){
                             val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = product.amount, isReady = false, shoppingList = shoppingListId, product = product.id)
 
                             productShoppingListDAO.insert(productShoppingList)
