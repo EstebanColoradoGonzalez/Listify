@@ -43,24 +43,30 @@ class EstablishmentFragment : Fragment() {
 
         binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = ProductEstablishmentAdapter(
-            products = listOf(),
-            onItemClick = { product ->
-                val action = EstablishmentFragmentDirections
-                    .actionEstablishmentFragmentToProductFragment(product.productShoppingListId, product.productName)
-                findNavController().navigate(action)
-            },
-            onReadyChange = { productId, isReady ->
-                lifecycleScope.launch {
-                    shoppingListViewModel.updateIsReadyById(productId, isReady)
-                    reloadProducts(shoppingListId, establishmentName)
-                    reloadTotal(shoppingListId, establishmentName)
-                }
-            }
-        )
-        binding.rvProducts.adapter = adapter
-
         lifecycleScope.launch {
+            val shoppingListDTO = shoppingListViewModel.getShoppingListById(shoppingListId)
+            val isActive = shoppingListDTO?.status == TextConstants.STATUS_ACTIVE
+
+            adapter = ProductEstablishmentAdapter(
+                products = listOf(),
+                onItemClick = { product ->
+                    val action = EstablishmentFragmentDirections
+                        .actionEstablishmentFragmentToProductFragment(product.productShoppingListId, product.productName)
+                    findNavController().navigate(action)
+                },
+                onReadyChange = { productId, isReady ->
+                    lifecycleScope.launch {
+                        shoppingListViewModel.updateIsReadyById(productId, isReady)
+                        reloadProducts(shoppingListId, establishmentName)
+                        reloadTotal(shoppingListId, establishmentName)
+                    }
+                },
+                isActive = isActive
+            )
+            binding.rvProducts.adapter = adapter
+
+            binding.fabAddProduct.isEnabled = isActive
+
             reloadProducts(shoppingListId, establishmentName)
             reloadTotal(shoppingListId, establishmentName)
         }

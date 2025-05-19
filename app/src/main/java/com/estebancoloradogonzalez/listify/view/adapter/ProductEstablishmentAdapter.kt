@@ -13,7 +13,8 @@ import com.estebancoloradogonzalez.listify.model.dto.ProductShoppingListWithEsta
 class ProductEstablishmentAdapter(
     private var products: List<ProductShoppingListWithEstablishmentDTO>,
     private val onItemClick: (ProductShoppingListWithEstablishmentDTO) -> Unit,
-    private val onReadyChange: (productId: Long, isReady: Boolean) -> Unit
+    private val onReadyChange: (productId: Long, isReady: Boolean) -> Unit,
+    private var isActive: Boolean = true
 ) : RecyclerView.Adapter<ProductEstablishmentAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -40,11 +41,27 @@ class ProductEstablishmentAdapter(
                 context.getColor(R.color.item_green)
             cardViewProduct.setCardBackgroundColor(color)
 
-            cbIsReady.setOnCheckedChangeListener { _, isChecked ->
-                onReadyChange(product.productShoppingListId, isChecked)
-            }
+            cbIsReady.isEnabled = isActive
+            itemView.isEnabled = isActive
+            cardViewProduct.isEnabled = isActive
 
-            itemView.setOnClickListener { onItemClick(product) }
+            val alpha = if (isActive) 1.0f else 0.75f
+            cardViewProduct.alpha = alpha
+            cbIsReady.alpha = alpha
+            tvProductName.alpha = alpha
+            tvAmountValue.alpha = alpha
+            tvUnitPrice.alpha = alpha
+            tvUnitSymbol.alpha = alpha
+
+            if (isActive) {
+                cbIsReady.setOnCheckedChangeListener { _, isChecked ->
+                    onReadyChange(product.productShoppingListId, isChecked)
+                }
+                itemView.setOnClickListener { onItemClick(product) }
+            } else {
+                cbIsReady.setOnCheckedChangeListener(null)
+                itemView.setOnClickListener(null)
+            }
         }
     }
 
