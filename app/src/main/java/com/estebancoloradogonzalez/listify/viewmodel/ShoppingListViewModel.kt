@@ -36,6 +36,12 @@ class ShoppingListViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    suspend fun getShoppingListById(shoppingList: Long): ShoppingListDTO? {
+        return withContext(Dispatchers.IO) {
+            shoppingListDAO.getShoppingListDTOById(shoppingList)
+        }
+    }
+
     suspend fun getTotalAmountByShoppingListAndEstablishment(
         shoppingListId: Long,
         establishmentName: String
