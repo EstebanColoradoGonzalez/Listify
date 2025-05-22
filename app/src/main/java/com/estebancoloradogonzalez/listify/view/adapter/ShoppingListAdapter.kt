@@ -8,6 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.estebancoloradogonzalez.listify.R
 import com.estebancoloradogonzalez.listify.model.dto.ShoppingListDTO
+import com.estebancoloradogonzalez.listify.utils.TextConstants
 import java.time.format.DateTimeFormatter
 
 class ShoppingListAdapter(
@@ -28,7 +29,7 @@ class ShoppingListAdapter(
 
     override fun onBindViewHolder(holder: ShoppingListViewHolder, position: Int) {
         val shoppingList = shoppingLists[position]
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(TextConstants.DATE_FORMAT)
         val dateFormatted = shoppingList.date.format(formatter)
         holder.tvShoppingListDate.text = dateFormatted
 

@@ -12,9 +12,6 @@ interface StateDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg states: State)
 
-    @Query(Queries.SELECT_STATE)
-    suspend fun getStates(): List<State>
-
     @Query(Queries.SELECT_STATE_BY_NAME)
     suspend fun getStateByName(name: String): State?
 
