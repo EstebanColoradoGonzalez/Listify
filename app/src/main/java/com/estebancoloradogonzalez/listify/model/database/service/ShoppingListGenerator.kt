@@ -141,11 +141,11 @@ class ShoppingListGenerator(private val db: AppDatabase) {
     fun getDateThreshold(date: LocalDateTime, purchaseFrequency: String): LocalDateTime = when (purchaseFrequency) {
         TextConstants.FREQUENCY_WEEKLY -> date.minusWeeks(NumericConstants.LONG_ONE)
         TextConstants.FREQUENCY_FORTNIGHTLY -> date.minusWeeks(NumericConstants.LONG_TWO)
-        TextConstants.FREQUENCY_MONTHLY -> date.minusMonths(NumericConstants.LONG_ONE)
-        TextConstants.FREQUENCY_BIMONTHLY -> date.minusMonths(NumericConstants.LONG_TWO)
-        TextConstants.FREQUENCY_QUARTERLY -> date.minusMonths(NumericConstants.LONG_THREE)
-        TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusMonths(NumericConstants.LONG_FOUR)
-        TextConstants.FREQUENCY_SEMIANNUAL -> date.minusMonths(NumericConstants.LONG_SIX)
+        TextConstants.FREQUENCY_MONTHLY -> date.minusWeeks(NumericConstants.LONG_FOUR)
+        TextConstants.FREQUENCY_BIMONTHLY -> date.minusWeeks(NumericConstants.LONG_EIGHT)
+        TextConstants.FREQUENCY_QUARTERLY -> date.minusWeeks(NumericConstants.LONG_TWELVE)
+        TextConstants.FREQUENCY_FOUR_MONTHLY -> date.minusWeeks(NumericConstants.LONG_SIXTEEN)
+        TextConstants.FREQUENCY_SEMIANNUAL -> date.minusWeeks(NumericConstants.LONG_TWENTY_FOUR)
         else -> throw IllegalArgumentException(Messages.NOT_SUPPORTED_FREQUENCY + purchaseFrequency)
     }
 }
