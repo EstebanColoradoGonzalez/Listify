@@ -9,15 +9,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.estebancoloradogonzalez.listify.R
 import com.estebancoloradogonzalez.listify.databinding.FragmentProductsBinding
+import com.estebancoloradogonzalez.listify.model.dto.ProductDTO
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.view.adapter.ProductAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class ProductsFragment : Fragment() {
+
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private val userViewModel: UserViewModel by viewModels()
@@ -34,42 +38,58 @@ class ProductsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fetchUserIdAndSetup()
+        setupFab()
+        setupCategoriesButton()
+        displayTotalExpenditure()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun fetchUserIdAndSetup() {
         lifecycleScope.launch {
-            userId = userViewModel.getUserId()
+            userId = userViewModel.fetchUserId()
             setupRecyclerView(userId)
-        }
-
-        binding.fabAddProduct.setOnClickListener {
-            val action = ProductsFragmentDirections.actionProductsFragmentToCreateProductFragment(userId)
-            findNavController().navigate(action)
-        }
-
-        binding.btnCategories.setOnClickListener {
-            val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment()
-            findNavController().navigate(action)
-        }
-
-        lifecycleScope.launch {
-            val totalExpenditure = productViewModel.getTotalExpenditure() ?: NumericConstants.ZERO_POINT_ZERO
-            binding.tvTotalExpenditure.text = TextConstants.TOTAL_EXPENDITURE + totalExpenditure
         }
     }
 
     private fun setupRecyclerView(user: Long) {
         binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
-            val products = productViewModel.getProducts(user)
-            val adapter = ProductAdapter(products) { product ->
-                val action = ProductsFragmentDirections.actionProductsFragmentToUpdateProductFragment(product.id)
-                findNavController().navigate(action)
-            }
-            binding.rvProducts.adapter = adapter
+            val products = productViewModel.fetchProducts(user)
+            binding.rvProducts.adapter = createProductAdapter(products)
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun createProductAdapter(products: List<ProductDTO>): ProductAdapter {
+        return ProductAdapter(products) { product ->
+            val action = ProductsFragmentDirections.actionProductsFragmentToUpdateProductFragment(product.id)
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun setupFab() {
+        binding.fabAddProduct.setOnClickListener {
+            val action = ProductsFragmentDirections.actionProductsFragmentToCreateProductFragment(userId)
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun setupCategoriesButton() {
+        binding.btnCategories.setOnClickListener {
+            val action = ProductsFragmentDirections.actionProductsFragmentToCategoriesFragment()
+            findNavController().navigate(action)
+        }
+    }
+
+    private fun displayTotalExpenditure() {
+        lifecycleScope.launch {
+            val totalExpenditure = productViewModel.fetchTotalExpenditure() ?: NumericConstants.ZERO_POINT_ZERO
+            val formattedExpenditure = String.format(Locale.getDefault(), TextConstants.AMOUNT_FORMAT, totalExpenditure)
+            binding.tvTotalExpenditure.text = context?.getString(R.string.total_expenditure, formattedExpenditure)
+        }
     }
 }

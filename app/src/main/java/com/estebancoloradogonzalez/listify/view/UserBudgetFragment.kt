@@ -12,9 +12,10 @@ import com.estebancoloradogonzalez.listify.databinding.FragmentUserBudgetBinding
 import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 
 class UserBudgetFragment : Fragment() {
+
     private var _binding: FragmentUserBudgetBinding? = null
     private val binding get() = _binding!!
-    private val userViewModel: UserViewModel by viewModels()
+    private val viewModel: UserViewModel by viewModels()
     private val args: UserBudgetFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -27,26 +28,37 @@ class UserBudgetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val userName = args.userName
-
-        binding.btnStart.setOnClickListener {
-            val budgetValue = binding.etBudget.text.toString()
-
-            userViewModel.registerUser(userName, budgetValue, { errorMessage ->
-                binding.tvBudgetError.text = errorMessage
-                binding.tvBudgetError.visibility = View.VISIBLE
-            }) { userId ->
-                binding.tvBudgetError.visibility = View.GONE
-                val action = UserBudgetFragmentDirections.actionUserBudgetFragmentToShoppingListsFragment(userId)
-                findNavController().navigate(action)
-            }
-
-        }
+        setupStartButton()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupStartButton() {
+        binding.btnStart.setOnClickListener { handleStart() }
+    }
+
+    private fun handleStart() {
+        val userName = args.userName
+        val budgetValue = binding.etBudget.text.toString()
+        viewModel.registerUser(
+            userName,
+            budgetValue,
+            ::showBudgetError,
+            ::onUserRegistered
+        )
+    }
+
+    private fun showBudgetError(errorMessage: String) {
+        binding.tvBudgetError.text = errorMessage
+        binding.tvBudgetError.visibility = View.VISIBLE
+    }
+
+    private fun onUserRegistered(userId: Long) {
+        binding.tvBudgetError.visibility = View.GONE
+        val action = UserBudgetFragmentDirections.actionUserBudgetFragmentToShoppingListsFragment(userId)
+        findNavController().navigate(action)
     }
 }

@@ -8,11 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class EstablishmentViewModel(application: Application) : AndroidViewModel(application) {
-    private val establishmentDAO = AppDatabase.getDatabase(application).establishmentDao()
+    private val establishmentDao = AppDatabase.getDatabase(application).establishmentDao()
 
-    suspend fun getEstablishments(): List<Establishment> {
-        return withContext(Dispatchers.IO) {
-            establishmentDAO.getEstablishments()
-        }
+    suspend fun fetchEstablishments(): List<Establishment> = withContext(Dispatchers.IO) {
+        establishmentDao.getAll()
     }
 }
