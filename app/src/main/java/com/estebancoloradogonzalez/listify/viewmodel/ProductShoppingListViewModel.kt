@@ -13,77 +13,88 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ProductShoppingListViewModel(application: Application) : AndroidViewModel(application)  {
-    private val productShoppingListDAO = AppDatabase.getDatabase(application).productShoppingListDao()
-    private val productDAO = AppDatabase.getDatabase(application).productDao()
-    private val amountDAO = AppDatabase.getDatabase(application).amountDao()
-    private val shoppingListDAO = AppDatabase.getDatabase(application).shoppingListDao()
+class ProductShoppingListViewModel(application: Application) : AndroidViewModel(application) {
+    private val productShoppingListDao = AppDatabase.getDatabase(application).productShoppingListDao()
+    private val productDao = AppDatabase.getDatabase(application).productDao()
+    private val amountDao = AppDatabase.getDatabase(application).amountDao()
+    private val shoppingListDao = AppDatabase.getDatabase(application).shoppingListDao()
 
-    suspend fun getProductShoppingListDetailById(productShoppingListId: Long): ProductShoppingListDetailDTO? {
-        return withContext(Dispatchers.IO) {
-            productShoppingListDAO.getProductShoppingListDetailById(productShoppingListId)
+    suspend fun fetchProductShoppingListDetail(productShoppingListId: Long): ProductShoppingListDetailDTO? =
+        withContext(Dispatchers.IO) {
+            productShoppingListDao.getDetailById(productShoppingListId)
         }
-    }
 
-    suspend fun getProductsToSelect(
+    suspend fun fetchAvailableProductsForSelection(
         shoppingListId: Long,
         establishmentName: String
-    ): List<ProductIdNameDTO> {
-        val allProducts = productDAO.getProductsByEstablishmentName(establishmentName)
-        val selectedProducts = shoppingListDAO.getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
+    ): List<ProductIdNameDTO> = withContext(Dispatchers.IO) {
+        val allProducts = productDao.getProductsByEstablishmentName(establishmentName)
+        val selectedProducts = shoppingListDao.getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
         val selectedProductNames = selectedProducts.map { it.productName }.toSet()
-
-        return withContext(Dispatchers.IO) {
-            allProducts.filter { it.name !in selectedProductNames }
-        }
+        allProducts.filter { it.name !in selectedProductNames }
     }
 
-    fun selectProduct(productId: Long,
-                      shoppingListId: Long,
-                      onSuccess: () -> Unit) {
+    fun addProductToShoppingList(
+        productId: Long,
+        shoppingListId: Long,
+        onSuccess: () -> Unit
+    ) {
         viewModelScope.launch {
-            val product = productDAO.getById(productId)
-
-            if(product != null) {
-                val amount = amountDAO.getAmountById(product.amount)
-
-                if(amount != null) {
-                    val productShoppingList = ProductShoppingList(unitPrice = product.unitPrice, purchasedAmount = amount.value, isReady = false, shoppingList = shoppingListId, product = product.id)
-
-                    productShoppingListDAO.insert(productShoppingList)
-                }
+            val product = productDao.getById(productId)
+            val amount = product?.let { amountDao.getById(it.amount) }
+            if (product != null && amount != null) {
+                val productShoppingList = ProductShoppingList(
+                    unitPrice = product.unitPrice,
+                    purchasedAmount = amount.value,
+                    isReady = false,
+                    shoppingList = shoppingListId,
+                    product = product.id
+                )
+                productShoppingListDao.insert(productShoppingList)
             }
-
             onSuccess()
         }
     }
 
-
-    fun updateProduct(id: Long, unitPrice: String, purchasedAmount: String,
-                              onError: (String) -> Unit, onSuccess: () -> Unit
+    fun updateProductInShoppingList(
+        id: Long,
+        unitPrice: String,
+        purchasedAmount: String,
+        onError: (String) -> Unit,
+        onSuccess: () -> Unit
     ) {
+        if (!isValidUnitPrice(unitPrice, onError) || !isValidPurchasedAmount(purchasedAmount, onError)) return
+
+        viewModelScope.launch {
+            productShoppingListDao.updateById(
+                id = id,
+                unitPrice = unitPrice.toDouble(),
+                purchasedAmount = purchasedAmount.toDouble()
+            )
+            onSuccess()
+        }
+    }
+
+    fun removeProductFromShoppingList(id: Long, onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            productShoppingListDao.deleteById(id)
+            onSuccess()
+        }
+    }
+
+    private fun isValidUnitPrice(unitPrice: String, onError: (String) -> Unit): Boolean {
         if (!InputValidator.isValidNumericValue(unitPrice)) {
             onError(Messages.ENTER_VALID_PRICE_MESSAGE)
-            return
+            return false
         }
-
-        if (!InputValidator.isValidNumericValue(purchasedAmount)) {
-            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
-            return
-        }
-
-        viewModelScope.launch {
-            productShoppingListDAO.updateById(id = id, unitPrice = unitPrice.toDouble(), purchasedAmount = purchasedAmount.toDouble())
-
-            onSuccess()
-        }
+        return true
     }
 
-    fun deleteProduct(id: Long, onSuccess: () -> Unit) {
-        viewModelScope.launch {
-            productShoppingListDAO.deleteById(id = id)
-
-            onSuccess()
+    private fun isValidPurchasedAmount(purchasedAmount: String, onError: (String) -> Unit): Boolean {
+        if (!InputValidator.isValidNumericValue(purchasedAmount)) {
+            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
+            return false
         }
+        return true
     }
 }

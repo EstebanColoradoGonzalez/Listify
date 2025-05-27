@@ -9,7 +9,6 @@
     app:cardBackgroundColor="?attr/colorPrimary"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
-
     <TextView
         android:id="@+id/tvEstablishmentName"
         android:layout_width="match_parent"

@@ -23,43 +23,34 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val user: LiveData<User?> get() = _user
 
     init {
-        checkUser()
+        loadUser()
     }
 
-    private fun checkUser() {
+    private fun loadUser() {
         viewModelScope.launch {
-            _user.postValue(userDao.getUser())
+            _user.postValue(userDao.get())
         }
     }
 
-    fun registerUser(name: String, budget: String, onError: (String) -> Unit, onUserRegistered: (Long) -> Unit) {
-        if (!InputValidator.isValidNumericValue(budget)) {
-            onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
-            return
-        }
+    fun registerUser(
+        name: String,
+        budget: String,
+        onError: (String) -> Unit,
+        onUserRegistered: (Long) -> Unit
+    ) {
+        if (!isBudgetValid(budget, onError)) return
 
         viewModelScope.launch {
-            val newBudget = Budget(value = budget.toDouble())
-            budgetDao.insertBudget(newBudget)
-
-            val budgetId = budgetDao.getBudgetId()
-
-            val newUser = User(name = name, registrationDate = LocalDateTime.now(), budget = budgetId)
-            userDao.insertUser(newUser)
-
-            val userId = userDao.getUserId()
-            _user.postValue(newUser)
-
+            val budgetId = insertBudgetAndGetId(budget)
+            val userId = insertUserAndGetId(name, budgetId)
+            _user.postValue(User(name = name, registrationDate = LocalDateTime.now(), budget = budgetId))
             onUserRegistered(userId)
         }
     }
 
-    suspend fun getUserId(): Long {
-        return withContext(Dispatchers.IO) {
-            userDao.getUserId()
-        }
+    suspend fun fetchUserId(): Long = withContext(Dispatchers.IO) {
+        userDao.getId()
     }
-
 
     fun updateUserName(userId: Long, newName: String, onError: (String) -> Unit) {
         if (!InputValidator.isValidName(newName)) {
@@ -67,9 +58,28 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         viewModelScope.launch {
-            userDao.updateUserName(userId, newName)
-            checkUser()
+            userDao.updateNameById(userId, newName)
+            loadUser()
         }
     }
 
+    private fun isBudgetValid(budget: String, onError: (String) -> Unit): Boolean {
+        if (!InputValidator.isValidNumericValue(budget)) {
+            onError(Messages.ENTER_VALID_BUDGET_MESSAGE)
+            return false
+        }
+        return true
+    }
+
+    private suspend fun insertBudgetAndGetId(budget: String): Long {
+        val newBudget = Budget(value = budget.toDouble())
+        budgetDao.insert(newBudget)
+        return budgetDao.getId()
+    }
+
+    private suspend fun insertUserAndGetId(name: String, budgetId: Long): Long {
+        val newUser = User(name = name, registrationDate = LocalDateTime.now(), budget = budgetId)
+        userDao.insert(newUser)
+        return userDao.getId()
+    }
 }

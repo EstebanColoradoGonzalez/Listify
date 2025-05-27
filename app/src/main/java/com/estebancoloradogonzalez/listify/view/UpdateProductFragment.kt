@@ -17,12 +17,12 @@ import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.CategoryViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.PurchaseFrequencyViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UnitOfMeasurementViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class UpdateProductFragment : Fragment() {
+
     private var _binding: FragmentUpdateProductBinding? = null
     private val binding get() = _binding!!
     private val args: UpdateProductFragmentArgs by navArgs()
@@ -39,7 +39,7 @@ class UpdateProductFragment : Fragment() {
     private var unitsOfMeasurement: List<String> = emptyList()
     private val statusOptions = listOf(TextConstants.PRODUCT_STATUS_ACTIVE, TextConstants.PRODUCT_STATUS_DESACTIVE)
 
-    private var productToUpdateDTO: com.estebancoloradogonzalez.listify.model.dto.ProductToUpdateDTO? = null
+    private var productToUpdate: com.estebancoloradogonzalez.listify.model.dto.ProductToUpdateDTO? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,105 +51,112 @@ class UpdateProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val productId = args.productId
-
-        val statusAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, statusOptions)
-        binding.spinnerIsActive.adapter = statusAdapter
-
-        loadData(productId)
-
-        binding.btnUpdateProduct.setOnClickListener {
-            val productName = binding.etProductName.text.toString()
-            val productPrice = binding.etProductPrice.text.toString()
-            val productQuantity = binding.etProductQuantity.text.toString()
-            val selectedUnitOfMeasurement = binding.spinnerUnitOfMeasurement.selectedItem.toString()
-            val selectedPurchaseFrequency = binding.spinnerPurchaseFrequency.selectedItem.toString()
-            val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
-            val selectedCategory = binding.spinnerCategory.selectedItem.toString()
-            val isActive = binding.spinnerIsActive.selectedItem.toString() == TextConstants.PRODUCT_STATUS_ACTIVE
-
-            lifecycleScope.launch {
-                val product = productViewModel.getProductById(productId)
-
-                if(product != null) {
-                    productViewModel.updateProduct(
-                        productName,
-                        productPrice,
-                        productQuantity,
-                        selectedUnitOfMeasurement,
-                        selectedPurchaseFrequency,
-                        selectedEstablishment,
-                        selectedCategory,
-                        isActive,
-                        productId,
-                        product.user,
-                        { errorMessage ->
-                            binding.tvError.text = errorMessage
-                            binding.tvError.visibility = View.VISIBLE
-                        }) {
-                        binding.tvError.visibility = View.GONE
-                        findNavController().popBackStack()
-                    }
-                }
-            }
-        }
-
-        binding.btnDeleteProduct.setOnClickListener {
-            productViewModel.deleteProduct(productId,
-                onSuccess = {
-                    findNavController().popBackStack()
-                })
-        }
-    }
-
-    private fun loadData(productId: Long) {
-        CoroutineScope(Dispatchers.Main).launch {
-            categories = withContext(Dispatchers.IO) { categoryViewModel.getCategories().map { it.name } }
-            establishments = withContext(Dispatchers.IO) { establishmentViewModel.getEstablishments().map { it.name } }
-            purchaseFrequencies = withContext(Dispatchers.IO) { purchaseFrequencyViewModel.getEPurchaseFrequencies().map { it.name } }
-            unitsOfMeasurement = withContext(Dispatchers.IO) { unitOfMeasurementViewModel.getUnitsOfMeasurement().map { it.name } }
-
-            productToUpdateDTO = withContext(Dispatchers.IO) { productViewModel.getProductToUpdate(productId) }
-
-            setupSpinnersAndInputs()
-        }
-    }
-
-    private fun setupSpinnersAndInputs() {
-        productToUpdateDTO?.let { product ->
-            binding.etProductName.setText(product.name)
-            binding.etProductPrice.setText(product.unitPrice.toString())
-            binding.etProductQuantity.setText(product.amount.toString())
-
-            val unitAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, unitsOfMeasurement)
-            binding.spinnerUnitOfMeasurement.adapter = unitAdapter
-            val unitPos = unitsOfMeasurement.indexOf(product.unitOfMeasurement)
-            if (unitPos >= 0) binding.spinnerUnitOfMeasurement.setSelection(unitPos)
-
-            val frequencyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, purchaseFrequencies)
-            binding.spinnerPurchaseFrequency.adapter = frequencyAdapter
-            val frequencyPos = purchaseFrequencies.indexOf(product.purchaseFrequency)
-            if (frequencyPos >= 0) binding.spinnerPurchaseFrequency.setSelection(frequencyPos)
-
-            val establishmentAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, establishments)
-            binding.spinnerEstablishment.adapter = establishmentAdapter
-            val establishmentPos = establishments.indexOf(product.establishment)
-            if (establishmentPos >= 0) binding.spinnerEstablishment.setSelection(establishmentPos)
-
-            val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categories)
-            binding.spinnerCategory.adapter = categoryAdapter
-            val categoryPos = categories.indexOf(product.category)
-            if (categoryPos >= 0) binding.spinnerCategory.setSelection(categoryPos)
-
-            val selectedStatus = if (product.isActive) TextConstants.PRODUCT_STATUS_ACTIVE else TextConstants.PRODUCT_STATUS_DESACTIVE
-            val statusPos = statusOptions.indexOf(selectedStatus)
-            binding.spinnerIsActive.setSelection(statusPos)
-        }
+        setupStatusSpinner()
+        loadData()
+        setupUpdateButton()
+        setupDeleteButton()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupStatusSpinner() {
+        val statusAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, statusOptions)
+        binding.spinnerIsActive.adapter = statusAdapter
+    }
+
+    private fun loadData() {
+        val productId = args.productId
+        viewLifecycleOwner.lifecycleScope.launch {
+            categories = withContext(Dispatchers.IO) { categoryViewModel.fetchCategories().map { it.name } }
+            establishments = withContext(Dispatchers.IO) { establishmentViewModel.fetchEstablishments().map { it.name } }
+            purchaseFrequencies = withContext(Dispatchers.IO) { purchaseFrequencyViewModel.fetchPurchaseFrequencies().map { it.name } }
+            unitsOfMeasurement = withContext(Dispatchers.IO) { unitOfMeasurementViewModel.fetchUnitsOfMeasurement().map { it.name } }
+            productToUpdate = withContext(Dispatchers.IO) { productViewModel.fetchProductToUpdate(productId) }
+            setupSpinnersAndInputs()
+        }
+    }
+
+    private fun setupSpinnersAndInputs() {
+        productToUpdate?.let { product ->
+            binding.etProductName.setText(product.name)
+            binding.etProductPrice.setText(product.unitPrice.toString())
+            binding.etProductQuantity.setText(product.amount.toString())
+
+            setSpinner(binding.spinnerUnitOfMeasurement, unitsOfMeasurement, product.unitOfMeasurement)
+            setSpinner(binding.spinnerPurchaseFrequency, purchaseFrequencies, product.purchaseFrequency)
+            setSpinner(binding.spinnerEstablishment, establishments, product.establishment)
+            setSpinner(binding.spinnerCategory, categories, product.category)
+
+            val status = if (product.isActive) TextConstants.PRODUCT_STATUS_ACTIVE else TextConstants.PRODUCT_STATUS_DESACTIVE
+            setSpinner(binding.spinnerIsActive, statusOptions, status)
+        }
+    }
+
+    private fun setSpinner(spinner: android.widget.Spinner, items: List<String>, selected: String?) {
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+        spinner.adapter = adapter
+        val pos = items.indexOf(selected)
+        if (pos >= 0) spinner.setSelection(pos)
+    }
+
+    private fun setupUpdateButton() {
+        binding.btnUpdateProduct.setOnClickListener { handleUpdateProduct() }
+    }
+
+    private fun handleUpdateProduct() {
+        val productId = args.productId
+        val productName = binding.etProductName.text.toString()
+        val productPrice = binding.etProductPrice.text.toString()
+        val productQuantity = binding.etProductQuantity.text.toString()
+        val selectedUnitOfMeasurement = binding.spinnerUnitOfMeasurement.selectedItem.toString()
+        val selectedPurchaseFrequency = binding.spinnerPurchaseFrequency.selectedItem.toString()
+        val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
+        val selectedCategory = binding.spinnerCategory.selectedItem.toString()
+        val isActive = binding.spinnerIsActive.selectedItem.toString() == TextConstants.PRODUCT_STATUS_ACTIVE
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val product = productViewModel.fetchProductById(productId)
+            if (product != null) {
+                productViewModel.updateProduct(
+                    productName,
+                    productPrice,
+                    productQuantity,
+                    selectedUnitOfMeasurement,
+                    selectedPurchaseFrequency,
+                    selectedEstablishment,
+                    selectedCategory,
+                    isActive,
+                    productId,
+                    product.user,
+                    ::showError,
+                    ::onProductUpdated
+                )
+            }
+        }
+    }
+
+    private fun showError(errorMessage: String) {
+        binding.tvError.text = errorMessage
+        binding.tvError.visibility = View.VISIBLE
+    }
+
+    private fun onProductUpdated() {
+        binding.tvError.visibility = View.GONE
+        findNavController().popBackStack()
+    }
+
+    private fun setupDeleteButton() {
+        binding.btnDeleteProduct.setOnClickListener { handleDeleteProduct() }
+    }
+
+    private fun handleDeleteProduct() {
+        val productId = args.productId
+        productViewModel.deleteProduct(
+            productId,
+            onSuccess = { findNavController().popBackStack() }
+        )
     }
 }

@@ -18,6 +18,7 @@ import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment() {
+
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
@@ -38,42 +39,58 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        loadUserId()
+        observeUserData()
+        loadBudget()
+        setupInputListeners()
+        setupUpdateButton()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun loadUserId() {
         lifecycleScope.launch {
-            userId = userViewModel.getUserId()
+            userId = userViewModel.fetchUserId()
         }
+    }
 
+    private fun observeUserData() {
         userViewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
                 originalName = it.name
                 binding.etFullName.setText(originalName)
             }
         }
+    }
 
+    private fun loadBudget() {
         lifecycleScope.launch {
-            val budget = budgetViewModel.getUserBudget()
-            budget?.let {
+            budgetViewModel.fetchBudget()?.let {
                 originalBudget = it.value.toString()
                 binding.etBudget.setText(originalBudget)
             }
         }
-
-        binding.etFullName.addTextChangedListener { checkChanges() }
-        binding.etBudget.addTextChangedListener { checkChanges() }
-
-        binding.btnUpdate.setOnClickListener {
-            updateUserData()
-        }
     }
 
-    private fun checkChanges() {
+    private fun setupInputListeners() {
+        binding.etFullName.addTextChangedListener { updateButtonState() }
+        binding.etBudget.addTextChangedListener { updateButtonState() }
+    }
+
+    private fun updateButtonState() {
         val nameChanged = binding.etFullName.text.toString() != originalName
         val budgetChanged = binding.etBudget.text.toString() != originalBudget
-
         binding.btnUpdate.isEnabled = nameChanged || budgetChanged
     }
 
-    private fun updateUserData() {
+    private fun setupUpdateButton() {
+        binding.btnUpdate.setOnClickListener { updateUserAndBudget() }
+    }
+
+    private fun updateUserAndBudget() {
         val newName = binding.etFullName.text.toString().trim()
         val newBudget = binding.etBudget.text.toString().trim()
 
@@ -82,20 +99,14 @@ class SettingsFragment : Fragment() {
             return@updateUserName
         }
 
-        budgetViewModel.updateBudget(userId, newBudget) { errorMessage ->
+        budgetViewModel.updateBudgetAmount(userId, newBudget) { errorMessage ->
             binding.etBudget.error = errorMessage
-            return@updateBudget
+            return@updateBudgetAmount
         }
 
         Toast.makeText(requireContext(), Messages.DATA_UPDATED_SUCCESSFULLY_MESSAGE, Toast.LENGTH_SHORT).show()
         originalName = newName
         originalBudget = newBudget
         binding.btnUpdate.isEnabled = false
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

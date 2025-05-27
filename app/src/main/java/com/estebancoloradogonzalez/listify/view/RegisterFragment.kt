@@ -11,6 +11,7 @@ import com.estebancoloradogonzalez.listify.utils.InputValidator
 import com.estebancoloradogonzalez.listify.utils.Messages
 
 class RegisterFragment : Fragment() {
+
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
 
@@ -24,23 +25,39 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.btnNext.setOnClickListener {
-            val name = binding.etUserName.text.toString()
-
-            if (!InputValidator.isValidName(name)) {
-                binding.tvErrorMessage.text = Messages.ENTER_VALID_NAME_MESSAGE
-                binding.tvErrorMessage.visibility = View.VISIBLE
-            } else {
-                binding.tvErrorMessage.visibility = View.GONE
-                val action = RegisterFragmentDirections.actionRegisterFragmentToUserBudgetFragment(name)
-                findNavController().navigate(action)
-            }
-        }
+        setupNextButton()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupNextButton() {
+        binding.btnNext.setOnClickListener { handleNextClick() }
+    }
+
+    private fun handleNextClick() {
+        val userName = binding.etUserName.text.toString()
+        if (!InputValidator.isValidName(userName)) {
+            showErrorMessage()
+        } else {
+            hideErrorMessage()
+            navigateToUserBudget(userName)
+        }
+    }
+
+    private fun showErrorMessage() {
+        binding.tvErrorMessage.text = Messages.ENTER_VALID_NAME_MESSAGE
+        binding.tvErrorMessage.visibility = View.VISIBLE
+    }
+
+    private fun hideErrorMessage() {
+        binding.tvErrorMessage.visibility = View.GONE
+    }
+
+    private fun navigateToUserBudget(userName: String) {
+        val action = RegisterFragmentDirections.actionRegisterFragmentToUserBudgetFragment(userName)
+        findNavController().navigate(action)
     }
 }

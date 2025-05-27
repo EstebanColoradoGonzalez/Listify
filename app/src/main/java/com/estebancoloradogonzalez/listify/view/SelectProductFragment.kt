@@ -17,10 +17,11 @@ import com.estebancoloradogonzalez.listify.viewmodel.ProductShoppingListViewMode
 import kotlinx.coroutines.launch
 
 class SelectProductFragment : Fragment() {
+
     private var _binding: FragmentSelectProductBinding? = null
     private val binding get() = _binding!!
     private val args: SelectProductFragmentArgs by navArgs()
-    private val productShoppingListViewModel: ProductShoppingListViewModel by viewModels()
+    private val viewModel: ProductShoppingListViewModel by viewModels()
 
     private var productsToSelect: List<ProductIdNameDTO> = emptyList()
     private var selectedProductId: Long? = null
@@ -35,73 +36,79 @@ class SelectProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val shoppingListId = args.shoppingListId
-        val establishmentName = args.establishmentName
-
-        binding.btnSelectProduct.isEnabled = false
-
-        lifecycleScope.launch {
-            productsToSelect = productShoppingListViewModel.getProductsToSelect(shoppingListId, establishmentName)
-            if (productsToSelect.isEmpty()) {
-                binding.actvProducts.visibility = View.GONE
-                binding.btnSelectProduct.visibility = View.GONE
-                binding.tvNoProducts.visibility = View.VISIBLE
-            } else {
-                binding.actvProducts.visibility = View.VISIBLE
-                binding.btnSelectProduct.visibility = View.VISIBLE
-                binding.tvNoProducts.visibility = View.GONE
-
-                val productNames = productsToSelect.map { it.name }
-                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, productNames)
-                binding.actvProducts.setAdapter(adapter)
-
-                binding.actvProducts.setOnFocusChangeListener { _, hasFocus ->
-                    if (hasFocus) {
-                        binding.actvProducts.showDropDown()
-                    } else {
-                        val input = binding.actvProducts.text.toString()
-                        val match = productsToSelect.find { it.name == input }
-                        selectedProductId = match?.id
-                        binding.btnSelectProduct.isEnabled = (match != null)
-                    }
-                }
-                binding.actvProducts.setOnClickListener {
-                    binding.actvProducts.showDropDown()
-                }
-
-                binding.actvProducts.setOnItemClickListener { _, _, position, _ ->
-                    selectedProductId = productsToSelect[position].id
-                    binding.btnSelectProduct.isEnabled = true
-                }
-
-                binding.actvProducts.addTextChangedListener {
-                    val input = binding.actvProducts.text.toString()
-                    val match = productsToSelect.find { it.name == input }
-                    selectedProductId = match?.id
-                    binding.btnSelectProduct.isEnabled = (match != null)
-                }
-
-                binding.btnSelectProduct.setOnClickListener {
-                    val input = binding.actvProducts.text.toString()
-                    val product = productsToSelect.find { it.name == input }
-                    if (product != null) {
-                        productShoppingListViewModel.selectProduct(
-                            product.id,
-                            shoppingListId
-                        ) {
-                            findNavController().popBackStack()
-                        }
-                    } else {
-                        binding.actvProducts.error = getString(com.estebancoloradogonzalez.listify.R.string.select_product)
-                    }
-                }
-            }
-        }
+        loadAvailableProducts()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
 
+    private fun loadAvailableProducts() {
+        val shoppingListId = args.shoppingListId
+        val establishmentName = args.establishmentName
+
+        binding.btnSelectProduct.isEnabled = false
+
+        lifecycleScope.launch {
+            productsToSelect = viewModel.fetchAvailableProductsForSelection(shoppingListId, establishmentName)
+            if (productsToSelect.isEmpty()) {
+                showNoProductsMessage()
+            } else {
+                setupProductAutoComplete(productsToSelect)
+                setupSelectProductButton(shoppingListId)
+            }
+        }
+    }
+
+    private fun showNoProductsMessage() {
+        binding.actvProducts.visibility = View.GONE
+        binding.btnSelectProduct.visibility = View.GONE
+        binding.tvNoProducts.visibility = View.VISIBLE
+    }
+
+    private fun setupProductAutoComplete(products: List<ProductIdNameDTO>) {
+        binding.actvProducts.visibility = View.VISIBLE
+        binding.btnSelectProduct.visibility = View.VISIBLE
+        binding.tvNoProducts.visibility = View.GONE
+
+        val productNames = products.map { it.name }
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, productNames)
+        binding.actvProducts.setAdapter(adapter)
+
+        binding.actvProducts.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.actvProducts.showDropDown()
+            } else {
+                updateSelectedProductId()
+            }
+        }
+        binding.actvProducts.setOnClickListener { binding.actvProducts.showDropDown() }
+        binding.actvProducts.setOnItemClickListener { _, _, position, _ ->
+            selectedProductId = products[position].id
+            binding.btnSelectProduct.isEnabled = true
+        }
+        binding.actvProducts.addTextChangedListener { updateSelectedProductId() }
+    }
+
+    private fun updateSelectedProductId() {
+        val input = binding.actvProducts.text.toString()
+        val match = productsToSelect.find { it.name == input }
+        selectedProductId = match?.id
+        binding.btnSelectProduct.isEnabled = (match != null)
+    }
+
+    private fun setupSelectProductButton(shoppingListId: Long) {
+        binding.btnSelectProduct.setOnClickListener {
+            val input = binding.actvProducts.text.toString()
+            val product = productsToSelect.find { it.name == input }
+            if (product != null) {
+                viewModel.addProductToShoppingList(product.id, shoppingListId) {
+                    findNavController().popBackStack()
+                }
+            } else {
+                binding.actvProducts.error = getString(com.estebancoloradogonzalez.listify.R.string.select_product)
+            }
+        }
+    }
+}
