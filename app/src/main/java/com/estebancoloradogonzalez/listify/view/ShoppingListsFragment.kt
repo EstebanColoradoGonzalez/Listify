@@ -19,6 +19,7 @@ import com.estebancoloradogonzalez.listify.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class ShoppingListsFragment : Fragment() {
+
     private val args: ShoppingListsFragmentArgs by navArgs()
     private var _binding: FragmentShoppingListsBinding? = null
     private val binding get() = _binding!!
@@ -29,23 +30,46 @@ class ShoppingListsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentShoppingListsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        resolveUserIdAndSetup()
+        setupFab()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun resolveUserIdAndSetup() {
         if (args.userId == NumericConstants.LONG_NEGATIVE_ONE) {
             lifecycleScope.launch {
-                userId = userViewModel.getUserId()
+                userId = userViewModel.fetchUserId()
                 setupRecyclerView(userId)
             }
         } else {
             userId = args.userId
             setupRecyclerView(userId)
         }
+    }
 
+    private fun setupRecyclerView(user: Long) {
+        binding.rvShoppingLists.layoutManager = LinearLayoutManager(requireContext())
+        lifecycleScope.launch {
+            val shoppingLists: List<ShoppingListDTO> = shoppingListViewModel.fetchShoppingLists(user)
+            val adapter = ShoppingListAdapter(shoppingLists) { shoppingList ->
+                navigateToShoppingList(shoppingList.id)
+            }
+            binding.rvShoppingLists.adapter = adapter
+        }
+    }
+
+    private fun setupFab() {
         binding.fabGenerateShoppingList.setOnClickListener {
             val action = ShoppingListsFragmentDirections
                 .actionShoppingListsFragmentToGenerateShoppingListFragment(userId)
@@ -53,24 +77,9 @@ class ShoppingListsFragment : Fragment() {
         }
     }
 
-    private fun setupRecyclerView(user: Long) {
-        binding.rvShoppingLists.layoutManager = LinearLayoutManager(requireContext())
-        lifecycleScope.launch {
-            val shoppingLists: List<ShoppingListDTO> = shoppingListViewModel.getShoppingLists(user)
-            val shoppingListsFormatted = shoppingLists.map { list ->
-                list.copy(date = list.date)
-            }
-            val adapter = ShoppingListAdapter(shoppingListsFormatted) { shoppingList ->
-                val action = ShoppingListsFragmentDirections
-                    .actionShoppingListsFragmentToShoppingListFragment(shoppingList.id, userId)
-                findNavController().navigate(action)
-            }
-            binding.rvShoppingLists.adapter = adapter
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun navigateToShoppingList(shoppingListId: Long) {
+        val action = ShoppingListsFragmentDirections
+            .actionShoppingListsFragmentToShoppingListFragment(shoppingListId, userId)
+        findNavController().navigate(action)
     }
 }

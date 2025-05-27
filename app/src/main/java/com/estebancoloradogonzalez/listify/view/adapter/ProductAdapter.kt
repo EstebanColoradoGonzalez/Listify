@@ -29,7 +29,13 @@ class ProductAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = products[position]
         holder.tvProductName.text = product.name
-        holder.tvProductPriceUnit.text = "$${product.unitPrice} ${product.unitSymbol}"
+
+        val context = holder.itemView.context
+        holder.tvProductPriceUnit.text = context.getString(
+            R.string.product_price_unit_format,
+            product.unitPrice,
+            product.unitSymbol
+        )
 
         holder.cardView.setOnClickListener {
             onItemClick(product)

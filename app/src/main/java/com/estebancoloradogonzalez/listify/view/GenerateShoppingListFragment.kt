@@ -25,15 +25,15 @@ class GenerateShoppingListFragment : Fragment() {
     private var _binding: FragmentGenerateShoppingListBinding? = null
     private val binding get() = _binding!!
     private val args: GenerateShoppingListFragmentArgs by navArgs()
-    private val shoppingListViewModel: ShoppingListViewModel by viewModels()
-    private var userId = NumericConstants.LONG_NEGATIVE_ONE
+    private val viewModel: ShoppingListViewModel by viewModels()
 
+    private var userId = NumericConstants.LONG_NEGATIVE_ONE
     private var selectedDate: LocalDateTime? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentGenerateShoppingListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,31 +41,36 @@ class GenerateShoppingListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         userId = args.userId
+        setupDateInput()
+        setupGenerateButton()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupDateInput() {
         binding.etDate.isFocusable = false
-        binding.etDate.setOnClickListener {
-            showDatePickerDialog()
-        }
+        binding.etDate.setOnClickListener { showDatePickerDialog() }
+    }
 
-        binding.btnGenerate.setOnClickListener {
-            val date = selectedDate
-            if (date == null) {
-                binding.tvDateError.text = Messages.ENTER_VALID_DATE_MESSAGE
-                binding.tvDateError.visibility = View.VISIBLE
-            } else {
-                binding.tvDateError.visibility = View.GONE
-                lifecycleScope.launch {
-                    shoppingListViewModel.generateShoppingList(date, userId,
-                        onError = { errorMessage ->
-                            binding.tvDateError.text = errorMessage
-                            binding.tvDateError.visibility = View.VISIBLE
-                        },
-                        onSuccess = {
-                            binding.tvDateError.visibility = View.GONE
-                            requireActivity().onBackPressed()
-                        }
-                    )
-                }
+    private fun setupGenerateButton() {
+        binding.btnGenerate.setOnClickListener { handleGenerateShoppingList() }
+    }
+
+    private fun handleGenerateShoppingList() {
+        val date = selectedDate
+        if (date == null) {
+            showDateError(Messages.ENTER_VALID_DATE_MESSAGE)
+        } else {
+            hideDateError()
+            lifecycleScope.launch {
+                viewModel.generateShoppingList(
+                    date, userId,
+                    onError = { showDateError(it) },
+                    onSuccess = { onShoppingListGenerated() }
+                )
             }
         }
     }
@@ -76,15 +81,27 @@ class GenerateShoppingListFragment : Fragment() {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val datePicker = DatePickerDialog(requireContext(), { _, selYear, selMonth, selDay ->
-            selectedDate = LocalDateTime.of(selYear, selMonth + 1, selDay, LocalTime.now().hour, LocalTime.now().minute)
+            selectedDate = LocalDateTime.of(
+                selYear, selMonth + 1, selDay,
+                LocalTime.now().hour, LocalTime.now().minute
+            )
             val formatter = DateTimeFormatter.ofPattern(TextConstants.DATE_FORMAT)
             binding.etDate.setText(selectedDate?.format(formatter))
         }, year, month, day)
         datePicker.show()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun showDateError(errorMessage: String) {
+        binding.tvDateError.text = errorMessage
+        binding.tvDateError.visibility = View.VISIBLE
+    }
+
+    private fun onShoppingListGenerated() {
+        hideDateError()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
+    }
+
+    private fun hideDateError() {
+        binding.tvDateError.visibility = View.GONE
     }
 }

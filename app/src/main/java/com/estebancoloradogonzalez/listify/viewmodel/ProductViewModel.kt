@@ -20,229 +20,191 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
-    private val amountDAO = AppDatabase.getDatabase(application).amountDao()
-    private val amountUnitOfMeasurementDAO = AppDatabase.getDatabase(application).amountUnitOfMeasurementDao()
-    private val categoryDAO = AppDatabase.getDatabase(application).categoryDao()
-    private val establishmentDAO = AppDatabase.getDatabase(application).establishmentDao()
-    private val productCategoryDAO = AppDatabase.getDatabase(application).productCategoryDao()
-    private val productDAO = AppDatabase.getDatabase(application).productDao()
-    private val productEstablishmentDAO = AppDatabase.getDatabase(application).productEstablishmentDao()
-    private val productPurchaseFrenquencyDAO = AppDatabase.getDatabase(application).productPurchaseFrenquencyDao()
-    private val purchaseFrenquencyDAO = AppDatabase.getDatabase(application).purchaseFrequencyDao()
-    private val unitOfMeasurementDAO = AppDatabase.getDatabase(application).unitOfMeasurementDao()
+    private val amountDao = AppDatabase.getDatabase(application).amountDao()
+    private val amountUnitDao = AppDatabase.getDatabase(application).amountUnitOfMeasurementDao()
+    private val categoryDao = AppDatabase.getDatabase(application).categoryDao()
+    private val establishmentDao = AppDatabase.getDatabase(application).establishmentDao()
+    private val productCategoryDao = AppDatabase.getDatabase(application).productCategoryDao()
+    private val productDao = AppDatabase.getDatabase(application).productDao()
+    private val productEstablishmentDao = AppDatabase.getDatabase(application).productEstablishmentDao()
+    private val productPurchaseFrequencyDao = AppDatabase.getDatabase(application).productPurchaseFrenquencyDao()
+    private val purchaseFrequencyDao = AppDatabase.getDatabase(application).purchaseFrequencyDao()
+    private val unitOfMeasurementDao = AppDatabase.getDatabase(application).unitOfMeasurementDao()
 
-    suspend fun getProducts(user: Long): List<ProductDTO> {
-        return withContext(Dispatchers.IO) {
-            productDAO.getProducts(user)
-        }
+    suspend fun fetchProducts(userId: Long): List<ProductDTO> = withContext(Dispatchers.IO) {
+        productDao.getProducts(userId)
     }
 
-    suspend fun getTotalExpenditure(): Double? {
-        return withContext(Dispatchers.IO) {
-            productDAO.getTotalExpenditure()
-        }
+    suspend fun fetchTotalExpenditure(): Double? = withContext(Dispatchers.IO) {
+        productDao.getTotalExpenditure()
     }
 
-    suspend fun getProductToUpdate(productId: Long): ProductToUpdateDTO? {
-        return withContext(Dispatchers.IO) {
-            productDAO.getProductToUpdate(productId)
-        }
+    suspend fun fetchProductToUpdate(productId: Long): ProductToUpdateDTO? = withContext(Dispatchers.IO) {
+        productDao.getProductToUpdate(productId)
     }
 
-    suspend fun getProductById(productId: Long): Product? {
-        return withContext(Dispatchers.IO) {
-            productDAO.getById(productId)
-        }
+    suspend fun fetchProductById(productId: Long): Product? = withContext(Dispatchers.IO) {
+        productDao.getById(productId)
     }
 
-    suspend fun registerProduct(productName: String,
-                                productPrice: String,
-                                productQuantity: String,
-                                selectedUnitOfMeasurement: String,
-                                selectedPurchaseFrequency: String,
-                                selectedEstablishment: String,
-                                selectedCategory: String,
-                                userId: Long,
-                                onError: (String) -> Unit, onSuccess: () -> Unit) {
-        if (!InputValidator.isValidName(productName)) {
-            onError(Messages.ENTER_VALID_NAME_MESSAGE)
-            return
-        }
-
-        if (!InputValidator.isValidNumericValue(productPrice)) {
-            onError(Messages.ENTER_VALID_PRICE_MESSAGE)
-            return
-        }
-
-        if (!InputValidator.isValidNumericValue(productQuantity)) {
-            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
-            return
-        }
-
-        if (productDAO.getByName(productName) != null) {
+    suspend fun registerProduct(
+        name: String,
+        price: String,
+        quantity: String,
+        unitOfMeasurement: String,
+        purchaseFrequency: String,
+        establishment: String,
+        category: String,
+        userId: Long,
+        onError: (String) -> Unit,
+        onSuccess: () -> Unit
+    ) {
+        if (!isValidProductInput(name, price, quantity, onError)) return
+        if (productDao.getByName(name) != null) {
             onError(Messages.PRODUCT_ALREADY_EXISTS)
             return
         }
-
-        if (productDAO.isTotalExpenditureExceedBudgetToCreate(userId, productPrice.toDouble() * productQuantity.toDouble())) {
+        if (productDao.isTotalExpenditureExceedBudgetToCreate(userId, price.toDouble() * quantity.toDouble())) {
             onError(Messages.BUDGET_EXCEEDED)
             return
         }
-
         viewModelScope.launch {
-            val amount = Amount(value = productQuantity.toDouble())
-            val amountId = amountDAO.insert(amount)
-
-            val unitOfMeasurement = unitOfMeasurementDAO.getUnitOfMeasurementByName(selectedUnitOfMeasurement)
-
-            if(unitOfMeasurement != null) {
-                val amountUnitOfMeasurement = AmountUnitOfMeasurement(amount = amountId, unitOfMeasurement = unitOfMeasurement.id)
-                amountUnitOfMeasurementDAO.insert(amountUnitOfMeasurement)
-            }
-
-            val product = Product(name = productName, unitPrice = productPrice.toDouble(), isActive = true, amount = amountId, user = userId, registrationDate = LocalDateTime.now())
-            val productId = productDAO.insert(product)
-
-            val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
-
-            if(establishment != null) {
-                val productEstablishment = ProductEstablishment(product = productId, establishment = establishment.id)
-                productEstablishmentDAO.insert(productEstablishment)
-            }
-
-            val purchaseFrequency = purchaseFrenquencyDAO.getPurchaseFrequencyByName(selectedPurchaseFrequency)
-
-            if(purchaseFrequency != null) {
-                val productPurchaseFrequency = ProductPurchaseFrequency(product = productId, purchaseFrequency = purchaseFrequency.id)
-                productPurchaseFrenquencyDAO.insert(productPurchaseFrequency)
-            }
-
-            val category = categoryDAO.getCategoryByName(selectedCategory)
-
-            if(category != null) {
-                val productCategory = ProductCategory(product = productId, category = category.id)
-                productCategoryDAO.insert(productCategory)
-            }
-
+            val amountId = amountDao.insert(Amount(value = quantity.toDouble()))
+            linkAmountUnitOfMeasurement(amountId, unitOfMeasurement)
+            val productId = productDao.insert(
+                Product(
+                    name = name,
+                    unitPrice = price.toDouble(),
+                    isActive = true,
+                    amount = amountId,
+                    user = userId,
+                    registrationDate = LocalDateTime.now()
+                )
+            )
+            linkProductEstablishment(productId, establishment)
+            linkProductPurchaseFrequency(productId, purchaseFrequency)
+            linkProductCategory(productId, category)
             onSuccess()
         }
     }
 
     suspend fun updateProduct(
-        productName: String,
-        productPrice: String,
-        productQuantity: String,
-        selectedUnitOfMeasurement: String,
-        selectedPurchaseFrequency: String,
-        selectedEstablishment: String,
-        selectedCategory: String,
+        name: String,
+        price: String,
+        quantity: String,
+        unitOfMeasurement: String,
+        purchaseFrequency: String,
+        establishment: String,
+        category: String,
         active: Boolean,
         productId: Long,
         userId: Long,
-        onError: (String) -> Unit, onSuccess: () -> Unit
+        onError: (String) -> Unit,
+        onSuccess: () -> Unit
     ) {
-        if (!InputValidator.isValidName(productName)) {
-            onError(Messages.ENTER_VALID_NAME_MESSAGE)
-            return
-        }
-
-        if (!InputValidator.isValidNumericValue(productPrice)) {
-            onError(Messages.ENTER_VALID_PRICE_MESSAGE)
-            return
-        }
-
-        if (!InputValidator.isValidNumericValue(productQuantity)) {
-            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
-            return
-        }
-
-        if (productDAO.getByNameToUpdate(productName, productId) != null) {
+        if (!isValidProductInput(name, price, quantity, onError)) return
+        if (productDao.getByNameToUpdate(name, productId) != null) {
             onError(Messages.PRODUCT_ALREADY_EXISTS)
             return
         }
-
-        if (productDAO.isTotalExpenditureExceedBudgetToUpdate(userId, productPrice.toDouble() * productQuantity.toDouble(), productId)) {
+        if (productDao.isTotalExpenditureExceedBudgetToUpdate(userId, price.toDouble() * quantity.toDouble(), productId)) {
             onError(Messages.BUDGET_EXCEEDED)
             return
         }
-
         viewModelScope.launch {
-            productDAO.updateProductById(productId, productName, productPrice.toDouble(), active)
-
-            val product = productDAO.getById(productId)
-
-            if(product != null) {
-                amountDAO.updateValueById(product.amount, productQuantity.toDouble())
-
-                val amountUnitOfMeasurement = amountUnitOfMeasurementDAO.getByAmount(product.amount)
-                val unitOfMeasurement = unitOfMeasurementDAO.getUnitOfMeasurementByName(selectedUnitOfMeasurement)
-
-                if(amountUnitOfMeasurement != null && unitOfMeasurement != null) {
-                    amountUnitOfMeasurementDAO.updateUnitById(amountUnitOfMeasurement.id, unitOfMeasurement.id)
-                }
-
-                val productEstablishment = productEstablishmentDAO.getByProduct(productId)
-                val establishment = establishmentDAO.getEstablishmentByName(selectedEstablishment)
-
-                if(productEstablishment != null && establishment != null) {
-                    productEstablishmentDAO.updateEstablishmentById(productEstablishment.id, establishment.id)
-                }
-
-                val productPurchaseFrequency = productPurchaseFrenquencyDAO.getByProduct(productId)
-                val purchaseFrequency = purchaseFrenquencyDAO.getPurchaseFrequencyByName(selectedPurchaseFrequency)
-
-                if(productPurchaseFrequency != null && purchaseFrequency != null) {
-                    productPurchaseFrenquencyDAO.updatePurchaseFrequencyById(productPurchaseFrequency.id, purchaseFrequency.id)
-                }
-
-                val productCategory = productCategoryDAO.getByProduct(productId)
-                val category = categoryDAO.getCategoryByName(selectedCategory)
-
-                if(productCategory != null && category != null) {
-                    productCategoryDAO.updateCategoryById(productCategory.id, category.id)
-                }
-
-                onSuccess()
-            }
+            productDao.updateProductById(productId, name, price.toDouble(), active)
+            val product = productDao.getById(productId) ?: return@launch
+            amountDao.updateValueById(product.amount, quantity.toDouble())
+            updateAmountUnitOfMeasurement(product.amount, unitOfMeasurement)
+            updateProductEstablishment(productId, establishment)
+            updateProductPurchaseFrequency(productId, purchaseFrequency)
+            updateProductCategory(productId, category)
+            onSuccess()
         }
     }
 
-    fun deleteProduct(id: Long, onSuccess: () -> Unit) {
+    fun deleteProduct(productId: Long, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            val product = productDAO.getById(id)
-
-
-            if(product != null) {
-                val productCategory = productCategoryDAO.getByProduct(id)
-
-                if(productCategory != null) {
-                    productCategoryDAO.deleteById(productCategory.id)
-                }
-
-                val productPurchaseFrequency = productPurchaseFrenquencyDAO.getByProduct(id)
-
-                if(productPurchaseFrequency != null) {
-                    productPurchaseFrenquencyDAO.deleteById(productPurchaseFrequency.id)
-                }
-
-                val productEstablishment = productEstablishmentDAO.getByProduct(id)
-
-                if(productEstablishment != null) {
-                    productEstablishmentDAO.deleteById(productEstablishment.id)
-                }
-
-                productDAO.deleteById(id)
-
-                val amountUnitOfMeasurement = amountUnitOfMeasurementDAO.getByAmount(product.amount)
-
-                if(amountUnitOfMeasurement != null) {
-                    amountUnitOfMeasurementDAO.deleteById(amountUnitOfMeasurement.id)
-                }
-
-                amountDAO.deleteById(product.amount)
-
-                onSuccess()
-            }
+            val product = productDao.getById(productId) ?: return@launch
+            deleteProductRelations(productId, product.amount)
+            productDao.deleteById(productId)
+            amountDao.deleteById(product.amount)
+            onSuccess()
         }
+    }
+
+    private fun isValidProductInput(name: String, price: String, quantity: String, onError: (String) -> Unit): Boolean {
+        if (!InputValidator.isValidName(name)) {
+            onError(Messages.ENTER_VALID_NAME_MESSAGE)
+            return false
+        }
+        if (!InputValidator.isValidNumericValue(price)) {
+            onError(Messages.ENTER_VALID_PRICE_MESSAGE)
+            return false
+        }
+        if (!InputValidator.isValidNumericValue(quantity)) {
+            onError(Messages.ENTER_VALID_QUANTITY_MESSAGE)
+            return false
+        }
+        return true
+    }
+
+    private suspend fun linkAmountUnitOfMeasurement(amountId: Long, unitOfMeasurement: String) {
+        val unit = unitOfMeasurementDao.getByName(unitOfMeasurement) ?: return
+        amountUnitDao.insert(AmountUnitOfMeasurement(amount = amountId, unitOfMeasurement = unit.id))
+    }
+
+    private suspend fun linkProductEstablishment(productId: Long, establishment: String) {
+        val est = establishmentDao.getByName(establishment) ?: return
+        productEstablishmentDao.insert(ProductEstablishment(product = productId, establishment = est.id))
+    }
+
+    private suspend fun linkProductPurchaseFrequency(productId: Long, purchaseFrequency: String) {
+        val freq = purchaseFrequencyDao.getByName(purchaseFrequency) ?: return
+        productPurchaseFrequencyDao.insert(ProductPurchaseFrequency(product = productId, purchaseFrequency = freq.id))
+    }
+
+    private suspend fun linkProductCategory(productId: Long, category: String) {
+        val cat = categoryDao.getByName(category) ?: return
+        productCategoryDao.insert(ProductCategory(product = productId, category = cat.id))
+    }
+
+    private suspend fun updateAmountUnitOfMeasurement(amountId: Long, unitOfMeasurement: String) {
+        val amountUnit = amountUnitDao.getByAmount(amountId)
+        val unit = unitOfMeasurementDao.getByName(unitOfMeasurement)
+        if (amountUnit != null && unit != null) {
+            amountUnitDao.updateUnitById(amountUnit.id, unit.id)
+        }
+    }
+
+    private suspend fun updateProductEstablishment(productId: Long, establishment: String) {
+        val productEst = productEstablishmentDao.getByProduct(productId)
+        val est = establishmentDao.getByName(establishment)
+        if (productEst != null && est != null) {
+            productEstablishmentDao.updateEstablishmentById(productEst.id, est.id)
+        }
+    }
+
+    private suspend fun updateProductPurchaseFrequency(productId: Long, purchaseFrequency: String) {
+        val productFreq = productPurchaseFrequencyDao.getByProduct(productId)
+        val freq = purchaseFrequencyDao.getByName(purchaseFrequency)
+        if (productFreq != null && freq != null) {
+            productPurchaseFrequencyDao.updatePurchaseFrequencyById(productFreq.id, freq.id)
+        }
+    }
+
+    private suspend fun updateProductCategory(productId: Long, category: String) {
+        val productCat = productCategoryDao.getByProduct(productId)
+        val cat = categoryDao.getByName(category)
+        if (productCat != null && cat != null) {
+            productCategoryDao.updateCategoryById(productCat.id, cat.id)
+        }
+    }
+
+    private suspend fun deleteProductRelations(productId: Long, amountId: Long) {
+        productCategoryDao.getByProduct(productId)?.let { productCategoryDao.deleteById(it.id) }
+        productPurchaseFrequencyDao.getByProduct(productId)?.let { productPurchaseFrequencyDao.deleteById(it.id) }
+        productEstablishmentDao.getByProduct(productId)?.let { productEstablishmentDao.deleteById(it.id) }
+        amountUnitDao.getByAmount(amountId)?.let { amountUnitDao.deleteById(it.id) }
     }
 }

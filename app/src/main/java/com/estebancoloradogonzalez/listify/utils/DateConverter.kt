@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class DateConverter {
-
     @TypeConverter
     fun fromTimestamp(value: Long?): LocalDateTime? {
         return value?.let {

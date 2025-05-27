@@ -16,10 +16,11 @@ import com.estebancoloradogonzalez.listify.viewmodel.ProductShoppingListViewMode
 import kotlinx.coroutines.launch
 
 class ProductFragment : Fragment() {
+
     private var _binding: FragmentProductBinding? = null
     private val binding get() = _binding!!
     private val args: ProductFragmentArgs by navArgs()
-    private val productShoppingListViewModel: ProductShoppingListViewModel by viewModels()
+    private val viewModel: ProductShoppingListViewModel by viewModels()
 
     private var initialPrice: String = TextConstants.EMPTY
     private var initialQuantity: String = TextConstants.EMPTY
@@ -34,75 +35,91 @@ class ProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val productShoppingListId = args.productShoppingListId
-        val productName = args.productName
-
-        (activity as? AppCompatActivity)?.supportActionBar?.title = productName
-
-        binding.btnUpdateProduct.isEnabled = false
-
-        lifecycleScope.launch {
-            val detail = productShoppingListViewModel.getProductShoppingListDetailById(productShoppingListId)
-            detail?.let { product ->
-                initialPrice = product.unitPrice.toString()
-                initialQuantity = product.purchasedAmount.toString()
-
-                binding.etProductPrice.setText(initialPrice)
-                binding.etProductQuantity.setText(initialQuantity)
-                binding.tvUnitOfMeasurement.text = product.unitOfMeasurementName
-            }
-
-            setupInputListeners()
-        }
-
-        binding.btnUpdateProduct.setOnClickListener {
-            val newPrice = binding.etProductPrice.text.toString().trim()
-            val newQuantity = binding.etProductQuantity.text.toString().trim()
-
-            lifecycleScope.launch {
-                productShoppingListViewModel.updateProduct(productShoppingListId, newPrice, newQuantity,
-                    { errorMessage ->
-                        binding.tvError.text = errorMessage
-                        binding.tvError.visibility = View.VISIBLE
-                    }) {
-                    binding.tvError.visibility = View.GONE
-                    findNavController().popBackStack()
-                }
-            }
-        }
-
-        binding.btnDeleteProduct.setOnClickListener {
-            productShoppingListViewModel.deleteProduct(productShoppingListId,
-                onSuccess = {
-                    findNavController().popBackStack()
-                })
-        }
-
-    }
-
-    private fun setupInputListeners() {
-        val watcher = object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                checkIfInputsChanged()
-            }
-            override fun afterTextChanged(s: android.text.Editable?) { }
-        }
-
-        binding.etProductPrice.addTextChangedListener(watcher)
-        binding.etProductQuantity.addTextChangedListener(watcher)
-    }
-
-    private fun checkIfInputsChanged() {
-        val currentPrice = binding.etProductPrice.text.toString()
-        val currentQuantity = binding.etProductQuantity.text.toString()
-
-        binding.btnUpdateProduct.isEnabled = (currentPrice != initialPrice) || (currentQuantity != initialQuantity)
+        setupActionBar()
+        setupUpdateButton()
+        setupDeleteButton()
+        loadProductDetail()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
 
+    private fun setupActionBar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.title = args.productName
+    }
+
+    private fun setupUpdateButton() {
+        binding.btnUpdateProduct.isEnabled = false
+        binding.btnUpdateProduct.setOnClickListener { handleUpdateProduct() }
+    }
+
+    private fun setupDeleteButton() {
+        binding.btnDeleteProduct.setOnClickListener { handleDeleteProduct() }
+    }
+
+    private fun loadProductDetail() {
+        lifecycleScope.launch {
+            val detail = viewModel.fetchProductShoppingListDetail(args.productShoppingListId)
+            detail?.let { product ->
+                initialPrice = product.unitPrice.toString()
+                initialQuantity = product.purchasedAmount.toString()
+                binding.etProductPrice.setText(initialPrice)
+                binding.etProductQuantity.setText(initialQuantity)
+                binding.tvUnitOfMeasurement.text = product.unitOfMeasurementName
+            }
+            setupInputListeners()
+        }
+    }
+
+    private fun setupInputListeners() {
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateButtonState()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        }
+        binding.etProductPrice.addTextChangedListener(watcher)
+        binding.etProductQuantity.addTextChangedListener(watcher)
+    }
+
+    private fun updateButtonState() {
+        val currentPrice = binding.etProductPrice.text.toString()
+        val currentQuantity = binding.etProductQuantity.text.toString()
+        binding.btnUpdateProduct.isEnabled =
+            (currentPrice != initialPrice) || (currentQuantity != initialQuantity)
+    }
+
+    private fun handleUpdateProduct() {
+        val newPrice = binding.etProductPrice.text.toString().trim()
+        val newQuantity = binding.etProductQuantity.text.toString().trim()
+        lifecycleScope.launch {
+            viewModel.updateProductInShoppingList(
+                args.productShoppingListId,
+                newPrice,
+                newQuantity,
+                ::showError,
+                ::onProductUpdated
+            )
+        }
+    }
+
+    private fun showError(errorMessage: String) {
+        binding.tvError.text = errorMessage
+        binding.tvError.visibility = View.VISIBLE
+    }
+
+    private fun onProductUpdated() {
+        binding.tvError.visibility = View.GONE
+        findNavController().popBackStack()
+    }
+
+    private fun handleDeleteProduct() {
+        viewModel.removeProductFromShoppingList(
+            args.productShoppingListId,
+            onSuccess = { findNavController().popBackStack() }
+        )
+    }
+}
