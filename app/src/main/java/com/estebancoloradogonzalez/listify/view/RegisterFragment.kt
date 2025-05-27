@@ -40,15 +40,15 @@ class RegisterFragment : Fragment() {
     private fun handleNextClick() {
         val userName = binding.etUserName.text.toString()
         if (!InputValidator.isValidName(userName)) {
-            showErrorMessage(Messages.ENTER_VALID_NAME_MESSAGE)
+            showErrorMessage()
         } else {
             hideErrorMessage()
             navigateToUserBudget(userName)
         }
     }
 
-    private fun showErrorMessage(message: String) {
-        binding.tvErrorMessage.text = message
+    private fun showErrorMessage() {
+        binding.tvErrorMessage.text = Messages.ENTER_VALID_NAME_MESSAGE
         binding.tvErrorMessage.visibility = View.VISIBLE
     }
 

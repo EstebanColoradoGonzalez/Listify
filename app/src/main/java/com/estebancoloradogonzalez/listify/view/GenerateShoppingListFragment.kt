@@ -96,12 +96,12 @@ class GenerateShoppingListFragment : Fragment() {
         binding.tvDateError.visibility = View.VISIBLE
     }
 
-    private fun hideDateError() {
-        binding.tvDateError.visibility = View.GONE
-    }
-
     private fun onShoppingListGenerated() {
         hideDateError()
-        requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
+    }
+
+    private fun hideDateError() {
+        binding.tvDateError.visibility = View.GONE
     }
 }
