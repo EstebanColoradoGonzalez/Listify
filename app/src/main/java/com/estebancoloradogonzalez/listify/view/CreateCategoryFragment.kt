@@ -14,7 +14,7 @@ class CreateCategoryFragment : Fragment() {
 
     private var _binding: FragmentCreateCategoryBinding? = null
     private val binding get() = _binding!!
-    private val categoryViewModel: CategoryViewModel by viewModels()
+    private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,22 +26,34 @@ class CreateCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.btnSaveCategory.setOnClickListener {
-            val categoryName = binding.etCategoryName.text.toString()
-
-            categoryViewModel.createCategory(categoryName, { errorMessage ->
-                binding.tvCategoryNameError.text = errorMessage
-                binding.tvCategoryNameError.visibility = View.VISIBLE
-            }) {
-                binding.tvCategoryNameError.visibility = View.GONE
-                findNavController().popBackStack()
-            }
-        }
+        setupSaveButton()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupSaveButton() {
+        binding.btnSaveCategory.setOnClickListener { handleSaveCategory() }
+    }
+
+    private fun handleSaveCategory() {
+        val categoryName = binding.etCategoryName.text.toString()
+        viewModel.addCategory(
+            categoryName,
+            ::showCategoryNameError,
+            ::onCategoryAdded
+        )
+    }
+
+    private fun showCategoryNameError(errorMessage: String) {
+        binding.tvCategoryNameError.text = errorMessage
+        binding.tvCategoryNameError.visibility = View.VISIBLE
+    }
+
+    private fun onCategoryAdded() {
+        binding.tvCategoryNameError.visibility = View.GONE
+        findNavController().popBackStack()
     }
 }

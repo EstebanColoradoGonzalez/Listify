@@ -2,8 +2,11 @@ package com.estebancoloradogonzalez.listify.utils
 
 object TextConstants {
     const val EMPTY: String = ""
-
     const val DATABASE_NAME: String = "listify_database"
+    const val DATE_FORMAT = "dd/MM/yyyy"
+    const val AMOUNT_FORMAT = "%,.2f"
+    const val TOTAL_EXPENDITURE = "Gasto Total: $"
+    const val PARAM_USER_ID: String = "userId"
 
     const val TABLE_BUDGET: String = "budget"
     const val TABLE_STATE: String = "state"
@@ -63,8 +66,6 @@ object TextConstants {
     const val FREQUENCY_FOUR_MONTHLY = "Cuatrimestral"
     const val FREQUENCY_SEMIANNUAL = "Semestral"
 
-    const val PARAM_USER_ID: String = "userId"
-
     const val FRUITS = "Frutas"
     const val VEGETABLES = "Verduras"
     const val SPICES_AND_CONDIMENTS = "Especias y Condimentos"
@@ -80,8 +81,4 @@ object TextConstants {
     const val CLEANING_AND_HOME = "Limpieza y Hogar"
     const val PETS = "Mascotas"
     const val OTHERS = "Otros"
-
-    const val TOTAL_EXPENDITURE = "Gasto Total: $"
-    const val DATE_FORMAT = "dd/MM/yyyy"
-    const val AMOUNT_FORMAT = "%,.2f"
 }

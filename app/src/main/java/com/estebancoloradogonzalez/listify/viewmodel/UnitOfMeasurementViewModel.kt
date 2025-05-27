@@ -8,11 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class UnitOfMeasurementViewModel(application: Application) : AndroidViewModel(application) {
-    private val unitOfMeasurementDAO = AppDatabase.getDatabase(application).unitOfMeasurementDao()
+    private val unitOfMeasurementDao = AppDatabase.getDatabase(application).unitOfMeasurementDao()
 
-    suspend fun getUnitsOfMeasurement(): List<UnitOfMeasurement> {
-        return withContext(Dispatchers.IO) {
-            unitOfMeasurementDAO.getUnitsOfMeasurement()
-        }
+    suspend fun fetchUnitsOfMeasurement(): List<UnitOfMeasurement> = withContext(Dispatchers.IO) {
+        unitOfMeasurementDao.getAll()
     }
 }

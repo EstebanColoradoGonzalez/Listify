@@ -11,20 +11,23 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.estebancoloradogonzalez.listify.R
 import com.estebancoloradogonzalez.listify.databinding.FragmentEstablishmentBinding
 import com.estebancoloradogonzalez.listify.utils.NumericConstants
 import com.estebancoloradogonzalez.listify.utils.TextConstants
 import com.estebancoloradogonzalez.listify.view.adapter.ProductEstablishmentAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.ShoppingListViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class EstablishmentFragment : Fragment() {
+
     private var _binding: FragmentEstablishmentBinding? = null
     private val binding get() = _binding!!
     private val args: EstablishmentFragmentArgs by navArgs()
-    private val shoppingListViewModel: ShoppingListViewModel by viewModels()
+    private val viewModel: ShoppingListViewModel by viewModels()
 
-    private lateinit var adapter: ProductEstablishmentAdapter
+    private lateinit var productAdapter: ProductEstablishmentAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,63 +39,89 @@ class EstablishmentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val shoppingListId = args.shoppingListId
-        val establishmentName = args.establishmentName
-
-        (activity as? AppCompatActivity)?.supportActionBar?.title = establishmentName
-
-        binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
-
-        lifecycleScope.launch {
-            val shoppingListDTO = shoppingListViewModel.getShoppingListById(shoppingListId)
-            val isActive = shoppingListDTO?.status == TextConstants.STATUS_ACTIVE
-
-            adapter = ProductEstablishmentAdapter(
-                products = listOf(),
-                onItemClick = { product ->
-                    val action = EstablishmentFragmentDirections
-                        .actionEstablishmentFragmentToProductFragment(product.productShoppingListId, product.productName)
-                    findNavController().navigate(action)
-                },
-                onReadyChange = { productId, isReady ->
-                    lifecycleScope.launch {
-                        shoppingListViewModel.updateIsReadyById(productId, isReady)
-                        reloadProducts(shoppingListId, establishmentName)
-                        reloadTotal(shoppingListId, establishmentName)
-                    }
-                },
-                isActive = isActive
-            )
-            binding.rvProducts.adapter = adapter
-
-            binding.fabAddProduct.isEnabled = isActive
-
-            reloadProducts(shoppingListId, establishmentName)
-            reloadTotal(shoppingListId, establishmentName)
-        }
-
-        binding.fabAddProduct.setOnClickListener {
-            val action = EstablishmentFragmentDirections
-                .actionEstablishmentFragmentToSelectProductFragment(shoppingListId, establishmentName)
-            findNavController().navigate(action)
-        }
-    }
-
-    private suspend fun reloadProducts(shoppingListId: Long, establishmentName: String) {
-        val products = shoppingListViewModel
-            .getProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
-            .sortedBy { it.isReady }
-        adapter.updateProducts(products)
-    }
-
-    private suspend fun reloadTotal(shoppingListId: Long, establishmentName: String) {
-        val total = shoppingListViewModel.getTotalAmountByShoppingListAndEstablishment(shoppingListId, establishmentName) ?: NumericConstants.ZERO_POINT_ZERO
-        binding.tvTotalAmount.text = TextConstants.TOTAL_EXPENDITURE + String.format(TextConstants.AMOUNT_FORMAT, total)
+        setupActionBar()
+        setupRecyclerView()
+        setupFab()
+        loadEstablishmentData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-}
 
+    private fun setupActionBar() {
+        (activity as? AppCompatActivity)?.supportActionBar?.title = args.establishmentName
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvProducts.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun setupFab() {
+        binding.fabAddProduct.setOnClickListener {
+            navigateToSelectProduct()
+        }
+    }
+
+    private fun loadEstablishmentData() {
+        lifecycleScope.launch {
+            val shoppingListId = args.shoppingListId
+            val establishmentName = args.establishmentName
+
+            val shoppingList = viewModel.fetchShoppingListById(shoppingListId)
+            val isActive = shoppingList?.status == TextConstants.STATUS_ACTIVE
+
+            productAdapter = createProductAdapter(isActive)
+            binding.rvProducts.adapter = productAdapter
+            binding.fabAddProduct.isEnabled = isActive
+
+            reloadProducts(shoppingListId, establishmentName)
+            reloadTotal(shoppingListId, establishmentName)
+        }
+    }
+
+    private fun createProductAdapter(isActive: Boolean): ProductEstablishmentAdapter {
+        return ProductEstablishmentAdapter(
+            products = listOf(),
+            onItemClick = { product -> navigateToProduct(product.productShoppingListId, product.productName) },
+            onReadyChange = { productId, isReady -> handleProductReadyChange(productId, isReady) },
+            isActive = isActive
+        )
+    }
+
+    private fun navigateToProduct(productId: Long, productName: String) {
+        val action = EstablishmentFragmentDirections
+            .actionEstablishmentFragmentToProductFragment(productId, productName)
+        findNavController().navigate(action)
+    }
+
+    private fun handleProductReadyChange(productId: Long, isReady: Boolean) {
+        lifecycleScope.launch {
+            viewModel.updateProductIsReady(productId, isReady)
+            reloadProducts(args.shoppingListId, args.establishmentName)
+            reloadTotal(args.shoppingListId, args.establishmentName)
+        }
+    }
+
+    private fun navigateToSelectProduct() {
+        val action = EstablishmentFragmentDirections
+            .actionEstablishmentFragmentToSelectProductFragment(args.shoppingListId, args.establishmentName)
+        findNavController().navigate(action)
+    }
+
+    private suspend fun reloadProducts(shoppingListId: Long, establishmentName: String) {
+        val products = viewModel
+            .fetchProductsByShoppingListAndEstablishment(shoppingListId, establishmentName)
+            .sortedBy { it.isReady }
+        productAdapter.updateProducts(products)
+    }
+
+    private suspend fun reloadTotal(shoppingListId: Long, establishmentName: String) {
+        val total = viewModel.fetchTotalAmountByShoppingListAndEstablishment(
+            shoppingListId, establishmentName
+        ) ?: NumericConstants.ZERO_POINT_ZERO
+        val formattedAmount = String.format(Locale.getDefault(), TextConstants.AMOUNT_FORMAT, total)
+        binding.tvTotalAmount.text = context?.getString(R.string.total_expenditure, formattedAmount)
+    }
+}

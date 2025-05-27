@@ -10,14 +10,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.estebancoloradogonzalez.listify.databinding.FragmentCategoriesBinding
+import com.estebancoloradogonzalez.listify.model.entity.Category
 import com.estebancoloradogonzalez.listify.view.adapter.CategoryAdapter
 import com.estebancoloradogonzalez.listify.viewmodel.CategoryViewModel
 import kotlinx.coroutines.launch
 
 class CategoriesFragment : Fragment() {
+
     private var _binding: FragmentCategoriesBinding? = null
     private val binding get() = _binding!!
-    private val categoryViewModel: CategoryViewModel by viewModels()
+    private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,33 +31,44 @@ class CategoriesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.fabAddCategory.setOnClickListener {
-            val action = CategoriesFragmentDirections.actionCategoriesFragmentToCreateCategoryFragment()
-            findNavController().navigate(action)
-        }
-
-        setupRecyclerView()
-        loadCategories()
-    }
-
-    private fun setupRecyclerView() {
-        binding.rvCategories.layoutManager = LinearLayoutManager(requireContext())
-    }
-
-    private fun loadCategories() {
-        lifecycleScope.launch {
-            val categories = categoryViewModel.getCategories()
-            val adapter = CategoryAdapter(categories) { category ->
-                val action = CategoriesFragmentDirections.actionCategoriesFragmentToUpdateCategoryFragment(category.id)
-                findNavController().navigate(action)
-            }
-            binding.rvCategories.adapter = adapter
-        }
+        setupFab()
+        setupCategoryList()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupFab() {
+        binding.fabAddCategory.setOnClickListener { navigateToCreateCategory() }
+    }
+
+    private fun navigateToCreateCategory() {
+        val action = CategoriesFragmentDirections.actionCategoriesFragmentToCreateCategoryFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun setupCategoryList() {
+        binding.rvCategories.layoutManager = LinearLayoutManager(requireContext())
+        loadCategories()
+    }
+
+    private fun loadCategories() {
+        lifecycleScope.launch {
+            val categories = viewModel.fetchCategories()
+            binding.rvCategories.adapter = createCategoryAdapter(categories)
+        }
+    }
+
+    private fun createCategoryAdapter(categories: List<Category>): CategoryAdapter {
+        return CategoryAdapter(categories) { category ->
+            navigateToUpdateCategory(category.id)
+        }
+    }
+
+    private fun navigateToUpdateCategory(categoryId: Long) {
+        val action = CategoriesFragmentDirections.actionCategoriesFragmentToUpdateCategoryFragment(categoryId)
+        findNavController().navigate(action)
     }
 }

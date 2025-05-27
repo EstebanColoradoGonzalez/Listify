@@ -1,41 +1,47 @@
 <resources>
     <string name="app_name">Listify</string>
     <string name="logo_application">Logo de la aplicación</string>
+
     <string name="next_button">Siguiente</string>
-    <string name="name_register_input">Nombre completo</string>
-    <string name="budget_register_input">Presupuesto mensual de compras</string>
     <string name="begin_input">Iniciar</string>
-    <string name="fragment_register">Registrar Usuario</string>
-    <string name="fragment_user_budget">Registrar Presupuesto</string>
-    <string name="fragment_shopping_lists">Listas de Compras</string>
-    <string name="fragment_settings">Ajustes</string>
-    <string name="fragment_products">Productos</string>
-    <string name="update_settings">Actualizar</string>
-    <string name="fragment_categories">Categorías</string>
-    <string name="fragment_create_category">Crear categoría</string>
-    <string name="fragment_create_product">Crear producto</string>
-    <string name="fragment_update_category">Actualizar categoría</string>
-    <string name="fragment_update_product">Actualizar producto</string>
-    <string name="category_name_input">Nombre de la categoría</string>
     <string name="save">Guardar</string>
     <string name="update">Actualizar</string>
     <string name="delete">Eliminar</string>
     <string name="complete">Completar</string>
     <string name="cancel">Cancelar</string>
+    <string name="create">Crear</string>
+    <string name="generate">Generar</string>
+
+    <string name="name_register_input">Nombre completo</string>
+    <string name="budget_register_input">Presupuesto mensual de compras</string>
+    <string name="category_name_input">Nombre de la categoría</string>
     <string name="product_name">Nombre</string>
     <string name="product_price">Precio</string>
     <string name="product_quantity">Cantidad</string>
-    <string name="create">Crear</string>
-    <string name="gasto_total">Gasto Total: 0.0</string>
+    <string name="date">Fecha</string>
+    <string name="enter_date">Ingresar fecha</string>
+
+    <string name="fragment_register">Registrar Usuario</string>
+    <string name="fragment_user_budget">Registrar Presupuesto</string>
+    <string name="fragment_shopping_lists">Listas de Compras</string>
+    <string name="fragment_settings">Ajustes</string>
+    <string name="fragment_products">Productos</string>
+    <string name="fragment_categories">Categorías</string>
+    <string name="fragment_create_category">Crear categoría</string>
+    <string name="fragment_create_product">Crear producto</string>
+    <string name="fragment_update_category">Actualizar categoría</string>
+    <string name="fragment_update_product">Actualizar producto</string>
     <string name="fragment_shopping_list">Lista de Compras</string>
     <string name="fragment_generate_shopping_list">Generar lista de compras</string>
     <string name="fragment_establishment">Establecimiento</string>
     <string name="fragment_product">Producto\n</string>
     <string name="fragment_select_product">Seleccionar producto</string>
-    <string name="generate">Generar</string>
-    <string name="enter_date">Ingresar fecha</string>
+
     <string name="no_products_to_select">Ya todos los productos de este establecimiento fueron seleccionados.</string>
     <string name="select_product">Seleccionar producto</string>
-    <string name="date">Fecha</string>
+
+    <string name="gasto_total">Gasto Total: 0.0</string>
     <string name="base_total">Total: $0.00</string>
+    <string name="product_price_unit_format">$%1$.2f %2$s</string>
+    <string name="total_expenditure">Gasto Total: $%s</string>
 </resources>

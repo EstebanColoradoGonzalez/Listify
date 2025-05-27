@@ -13,70 +13,66 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class CategoryViewModel(application: Application) : AndroidViewModel(application) {
+    private val categoryDao = AppDatabase.getDatabase(application).categoryDao()
 
-    private val categoryDAO = AppDatabase.getDatabase(application).categoryDao()
-
-    suspend fun getCategories(): List<Category> {
-        return withContext(Dispatchers.IO) {
-            categoryDAO.getCategories()
-        }
+    suspend fun fetchCategories(): List<Category> = withContext(Dispatchers.IO) {
+        categoryDao.getAll()
     }
 
-    fun createCategory(name: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
-        if (!InputValidator.isValidName(name)) {
-            onError(Messages.ENTER_VALID_CATEGORY_NAME_MESSAGE)
-            return
-        }
+    suspend fun fetchCategoryById(id: Long): Category? = withContext(Dispatchers.IO) {
+        categoryDao.getById(id)
+    }
 
-        if (name.length > NumericConstants.POSITIVE_ONE_HUNDRED) {
-            onError(Messages.CATEGORY_NAME_TOO_LONG_MESSAGE)
-            return
-        }
+    fun addCategory(name: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
+        if (!isCategoryNameValid(name, onError)) return
 
         viewModelScope.launch {
-            val existingCategory = categoryDAO.getCategoryByName(name)
-            if (existingCategory != null) {
+            if (isCategoryNameExists(name)) {
                 onError(Messages.CATEGORY_NAME_ALREADY_EXISTS_MESSAGE)
             } else {
-                val newCategory = Category(name = name)
-                categoryDAO.insert(newCategory)
+                categoryDao.insert(Category(name = name))
                 onSuccess()
             }
         }
     }
 
-    fun updateCategory(id: Long, newName: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
-        if (!InputValidator.isValidName(newName)) {
-            onError(Messages.ENTER_VALID_CATEGORY_NAME_MESSAGE)
-            return
-        }
-
-        if (newName.length > NumericConstants.POSITIVE_ONE_HUNDRED) {
-            onError(Messages.CATEGORY_NAME_TOO_LONG_MESSAGE)
-            return
-        }
+    fun modifyCategory(id: Long, newName: String, onError: (String) -> Unit, onSuccess: () -> Unit) {
+        if (!isCategoryNameValid(newName, onError)) return
 
         viewModelScope.launch {
-            val existingCategory = categoryDAO.getCategoryByName(newName)
-            if (existingCategory != null) {
+            if (isCategoryNameExists(newName)) {
                 onError(Messages.CATEGORY_NAME_ALREADY_EXISTS_MESSAGE)
             } else {
-                categoryDAO.updateCategory(id, newName)
+                categoryDao.updateNameById(id, newName)
                 onSuccess()
             }
         }
     }
 
-    fun deleteCategory(id: Long, onSuccess: () -> Unit) {
+    fun removeCategory(id: Long, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            categoryDAO.deleteCategoryById(id)
+            categoryDao.deleteById(id)
             onSuccess()
         }
     }
 
-    suspend fun getCategoryById(id: Long): Category? {
+    private fun isCategoryNameValid(name: String, onError: (String) -> Unit): Boolean {
+        if (!InputValidator.isValidName(name)) {
+            onError(Messages.ENTER_VALID_CATEGORY_NAME_MESSAGE)
+            return false
+        }
+
+        if (name.length > NumericConstants.POSITIVE_ONE_HUNDRED) {
+            onError(Messages.CATEGORY_NAME_TOO_LONG_MESSAGE)
+            return false
+        }
+
+        return true
+    }
+
+    private suspend fun isCategoryNameExists(name: String): Boolean {
         return withContext(Dispatchers.IO) {
-            categoryDAO.getCategoryById(id)
+            categoryDao.getByName(name) != null
         }
     }
 }

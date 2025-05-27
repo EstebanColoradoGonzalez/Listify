@@ -7,12 +7,10 @@ import com.estebancoloradogonzalez.listify.model.entity.PurchaseFrequency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PurchaseFrequencyViewModel (application: Application) : AndroidViewModel(application) {
-    private val purchaseFrequencyDAO = AppDatabase.getDatabase(application).purchaseFrequencyDao()
+class PurchaseFrequencyViewModel(application: Application) : AndroidViewModel(application) {
+    private val purchaseFrequencyDao = AppDatabase.getDatabase(application).purchaseFrequencyDao()
 
-    suspend fun getEPurchaseFrequencies(): List<PurchaseFrequency> {
-        return withContext(Dispatchers.IO) {
-            purchaseFrequencyDAO.getPurchaseFrequencies()
-        }
+    suspend fun fetchPurchaseFrequencies(): List<PurchaseFrequency> = withContext(Dispatchers.IO) {
+        purchaseFrequencyDao.getAll()
     }
 }

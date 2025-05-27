@@ -20,12 +20,12 @@ import com.estebancoloradogonzalez.listify.viewmodel.EstablishmentViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.ProductViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.PurchaseFrequencyViewModel
 import com.estebancoloradogonzalez.listify.viewmodel.UnitOfMeasurementViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CreateProductFragment : Fragment() {
+
     private var _binding: FragmentCreateProductBinding? = null
     private val binding get() = _binding!!
     private val args: CreateProductFragmentArgs by navArgs()
@@ -51,72 +51,73 @@ class CreateProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val userId = args.userId
-
-        loadData()
-
-        binding.btnCreateProduct.setOnClickListener {
-            val productName = binding.etProductName.text.toString()
-            val productPrice = binding.etProductPrice.text.toString()
-            val productQuantity = binding.etProductQuantity.text.toString()
-
-            val selectedUnitOfMeasurement = binding.spinnerUnitOfMeasurement.selectedItem.toString()
-            val selectedPurchaseFrequency = binding.spinnerPurchaseFrequency.selectedItem.toString()
-            val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
-            val selectedCategory = binding.spinnerCategory.selectedItem.toString()
-
-            lifecycleScope.launch {
-                productViewModel.registerProduct(
-                    productName,
-                    productPrice,
-                    productQuantity,
-                    selectedUnitOfMeasurement,
-                    selectedPurchaseFrequency,
-                    selectedEstablishment,
-                    selectedCategory,
-                    userId,
-                    { errorMessage ->
-                        binding.tvError.text = errorMessage
-                        binding.tvError.visibility = View.VISIBLE
-                    }) {
-                    binding.tvError.visibility = View.GONE
-                    findNavController().popBackStack()
-                }
-            }
-        }
-    }
-
-    private fun loadData() {
-        CoroutineScope(Dispatchers.Main).launch {
-            categories = withContext(Dispatchers.IO) { categoryViewModel.getCategories() }
-            establishments = withContext(Dispatchers.IO) { establishmentViewModel.getEstablishments() }
-            purchaseFrequencies = withContext(Dispatchers.IO) { purchaseFrequencyViewModel.getEPurchaseFrequencies() }
-            unitsOfMeasurement = withContext(Dispatchers.IO) { unitOfMeasurementViewModel.getUnitsOfMeasurement() }
-
-            setupSpinners()
-        }
-    }
-
-    private fun setupSpinners() {
-        val categoryNames = categories.map { it.name }
-        val establishmentNames = establishments.map { it.name }
-        val purchaseFrequencyNames = purchaseFrequencies.map { it.name }
-        val unitOfMeasurementNames = unitsOfMeasurement.map { it.name }
-
-        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, categoryNames)
-        val establishmentAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, establishmentNames)
-        val purchaseFrequencyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, purchaseFrequencyNames)
-        val unitOfMeasurementAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, unitOfMeasurementNames)
-
-        binding.spinnerCategory.adapter = categoryAdapter
-        binding.spinnerEstablishment.adapter = establishmentAdapter
-        binding.spinnerPurchaseFrequency.adapter = purchaseFrequencyAdapter
-        binding.spinnerUnitOfMeasurement.adapter = unitOfMeasurementAdapter
+        fetchData()
+        setupCreateProductButton()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun fetchData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            categories = withContext(Dispatchers.IO) { categoryViewModel.fetchCategories() }
+            establishments = withContext(Dispatchers.IO) { establishmentViewModel.fetchEstablishments() }
+            purchaseFrequencies = withContext(Dispatchers.IO) { purchaseFrequencyViewModel.fetchPurchaseFrequencies() }
+            unitsOfMeasurement = withContext(Dispatchers.IO) { unitOfMeasurementViewModel.fetchUnitsOfMeasurement() }
+            setupSpinners()
+        }
+    }
+
+    private fun setupSpinners() {
+        setSpinnerAdapter(binding.spinnerCategory, categories.map { it.name })
+        setSpinnerAdapter(binding.spinnerEstablishment, establishments.map { it.name })
+        setSpinnerAdapter(binding.spinnerPurchaseFrequency, purchaseFrequencies.map { it.name })
+        setSpinnerAdapter(binding.spinnerUnitOfMeasurement, unitsOfMeasurement.map { it.name })
+    }
+
+    private fun setSpinnerAdapter(spinner: android.widget.Spinner, items: List<String>) {
+        spinner.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, items)
+    }
+
+    private fun setupCreateProductButton() {
+        binding.btnCreateProduct.setOnClickListener { handleCreateProduct() }
+    }
+
+    private fun handleCreateProduct() {
+        val productName = binding.etProductName.text.toString()
+        val productPrice = binding.etProductPrice.text.toString()
+        val productQuantity = binding.etProductQuantity.text.toString()
+        val selectedUnitOfMeasurement = binding.spinnerUnitOfMeasurement.selectedItem.toString()
+        val selectedPurchaseFrequency = binding.spinnerPurchaseFrequency.selectedItem.toString()
+        val selectedEstablishment = binding.spinnerEstablishment.selectedItem.toString()
+        val selectedCategory = binding.spinnerCategory.selectedItem.toString()
+        val userId = args.userId
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            productViewModel.registerProduct(
+                productName,
+                productPrice,
+                productQuantity,
+                selectedUnitOfMeasurement,
+                selectedPurchaseFrequency,
+                selectedEstablishment,
+                selectedCategory,
+                userId,
+                ::showError,
+                ::onProductCreated
+            )
+        }
+    }
+
+    private fun showError(errorMessage: String) {
+        binding.tvError.text = errorMessage
+        binding.tvError.visibility = View.VISIBLE
+    }
+
+    private fun onProductCreated() {
+        binding.tvError.visibility = View.GONE
+        findNavController().popBackStack()
     }
 }
